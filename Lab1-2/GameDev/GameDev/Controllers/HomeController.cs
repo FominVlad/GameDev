@@ -28,18 +28,6 @@ namespace GameDev.Controllers
             return View();
         }
 
-        //public IActionResult Test(Chip chip)
-        //{
-        //    Chip ch = new Chip(chip.PosX);
-
-        //    if (!ModelState.IsValid)
-        //        return BadRequest("Fuck you!");
-
-        //    return Ok();
-        //    //if (!ModelState.IsValid)
-        //    //    return Content(ModelState.);
-        //}
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

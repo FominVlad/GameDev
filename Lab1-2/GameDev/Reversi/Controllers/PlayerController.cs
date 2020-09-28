@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Reversi.Models;
-using Reversi.Models.Interfaces;
 using Reversi.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,20 +13,37 @@ namespace GameDev.Controllers
     [Route("api/[controller]")]
     public class PlayerController : ControllerBase
     {
-        private PlayerService PlayerService { get; set; }
+        private GameService GameService { get; set; }
 
-        public PlayerController(PlayerService playerService)
+        public PlayerController(GameService gameService)
         {
-            this.PlayerService = playerService;
+            this.GameService = gameService;
         }
 
         [HttpPost]
-        public IActionResult AddPlayers(List<IPlayer> players)
+        public IActionResult AddPlayers(List<Player> players)
         {
-            PlayerService.FirstPlayer = players[0];
-            PlayerService.SecondPlayer = players[1];
+            if (players == null)
+                throw new Exception("Players list can`t be null.");
+            if (players.Count != 2)
+                throw new Exception("Players list count must be 2.");
+
+            GameService.AddPlayers(players);
 
             return Ok();
+        }
+
+        [HttpGet]
+        public IActionResult GetPlayers()
+        {
+            return Ok(GameService.Players);
+        }
+
+        [HttpPut]
+        public IActionResult DoSmth(int playerId)
+        {
+            return Ok(GameService.Players.Where(x => x.Id == playerId).FirstOrDefault().PlayerManager.DoSmth());
+
         }
     }
 }

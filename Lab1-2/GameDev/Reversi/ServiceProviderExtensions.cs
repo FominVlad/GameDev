@@ -9,14 +9,9 @@ namespace Reversi
 {
     public static class ServiceProviderExtensions
     {
-        public static void AddBoardService(this IServiceCollection services)
+        public static void AddGameService(this IServiceCollection services)
         {
-            services.AddSingleton<BoardService>();
-        }
-
-        public static void AddPlayerService(this IServiceCollection services)
-        {
-            services.AddSingleton<PlayerService>();
+            services.AddSingleton<GameService>();
         }
     }
 }

@@ -1,4 +1,4 @@
-const BASE_URL = 'https://localhost:44372';
+const BASE_URL = '';
 
 export const URL = BASE_URL + '/api/Game';
 export const START_GAME = 'PUT';

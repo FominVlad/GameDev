@@ -1,7 +1,6 @@
 import React from 'react';
 
 const End = ({winner, setStatus}) => {
-
     return (
         <div className="card-body text-center">
             <h1 className="card-title">Winner: {winner}</h1>

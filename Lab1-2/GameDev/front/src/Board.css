@@ -1,4 +1,4 @@
-.board-wrapper {
+/* .board-wrapper {
     position: relative;
     width: 100%;
 }
@@ -13,12 +13,13 @@
     position: absolute;
     width: 100%;
     height: 100%;
-}
+} */
 
 .board {
     position: relative;
-    width: 100%;
-    height: 100%;
+    width: 50vmin;
+    height: 50vmin;
+    margin: auto;
     background: #009688;
 }
 

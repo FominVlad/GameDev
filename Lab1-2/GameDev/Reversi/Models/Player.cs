@@ -1,4 +1,5 @@
 ﻿using Reversi.Managers;
+using Reversi.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,14 +14,14 @@ namespace Reversi.Models
 
     public class Player
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        public int Id { get; private set; }
+        public string Name { get; private set; }
 
-        public PlayerType PlayerType { get; set; }
+        public PlayerType PlayerType { private get; set; }
 
         public IPlayerManager PlayerManager { get; private set; }
 
-        public Player(int id, PlayerType playerType, string name)
+        public Player(int id, PlayerType playerType, string name, GameService gameService)
         {
             this.Id = id;
             this.PlayerType = playerType;
@@ -28,17 +29,12 @@ namespace Reversi.Models
 
             if (playerType == PlayerType.PC)
             {
-                PlayerManager = new PlayerManagerPC();
+                PlayerManager = new PlayerManagerPC(gameService);
             }
             else
             {
-                PlayerManager = new PlayerManagerHuman();
+                PlayerManager = new PlayerManagerHuman(gameService);
             }
-        }
-
-        public Player()
-        {
-
         }
     }
 }

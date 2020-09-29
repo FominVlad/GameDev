@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Reversi.Models;
 using Reversi.Services;
 
 namespace Reversi.Controllers
@@ -19,10 +20,13 @@ namespace Reversi.Controllers
             this.GameService = gameService;
         }
 
-        /*[HttpPatch]
-        public IActionResult DoStep(int playerId, )
+        [HttpPost]
+        public IActionResult DoStep(int playerId, [FromBody]Chip chip)
         {
+            GameService.Players.Where(player => player.Id == playerId).FirstOrDefault().PlayerManager.DoStep(playerId, chip);
 
-        }*/
+
+            return Ok();
+        }
     }
 }

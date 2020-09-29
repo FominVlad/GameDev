@@ -6,6 +6,7 @@ using Reversi.Models;
 using Reversi.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Reversi.Models.DTO;
 
 namespace GameDev.Controllers
 {
@@ -21,13 +22,8 @@ namespace GameDev.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddPlayers(List<Player> players)
+        public IActionResult AddPlayers(List<PlayerAddDTO> players)
         {
-            if (players == null)
-                throw new Exception("Players list can`t be null.");
-            if (players.Count != 2)
-                throw new Exception("Players list count must be 2.");
-
             GameService.AddPlayers(players);
 
             return Ok();

@@ -7,6 +7,6 @@ namespace Reversi.Managers
 {
     public interface IPlayerManager
     {
-        public string DoSmth();
+        public string DoStep();
     }
 }

@@ -38,12 +38,5 @@ namespace GameDev.Controllers
         {
             return Ok(GameService.Players);
         }
-
-        [HttpPut]
-        public IActionResult DoSmth(int playerId)
-        {
-            return Ok(GameService.Players.Where(x => x.Id == playerId).FirstOrDefault().PlayerManager.DoSmth());
-
-        }
     }
 }

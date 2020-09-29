@@ -26,8 +26,10 @@ function App() {
   };
 
   return (
-    <div className="App">
-      { renderScreen(status) }
+    <div className="container d-flex flex-column justify-content-center">
+      <div class="card">
+        { renderScreen(status) }
+      </div>
     </div>
   );
 }

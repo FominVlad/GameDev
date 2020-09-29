@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {URL, START_GAME, COLORS, TYPES} from './models/Api';
 import { createBoard } from './util';
 // import './Menu.css';
@@ -6,6 +6,7 @@ import { createBoard } from './util';
 const size = 8;
 
 const Menu = ({setPlayers, setStatus, setSize, setBoard, setCurrent}) => {
+    const [dark, setDark] = useState(false);
     const [error, setError] = useState(null);
     const [player1, setPlayer1] = useState({
         name: 'player1',
@@ -15,6 +16,15 @@ const Menu = ({setPlayers, setStatus, setSize, setBoard, setCurrent}) => {
         name: 'player2',
         playerType: TYPES.CPU,
     });
+
+    useEffect(() => {
+        const setter = {
+            true: 'add',
+            false: 'remove',
+        };
+
+        document.body.classList[setter[dark]]('dark');
+    })
 
     const startGame = e => {
         e.preventDefault();
@@ -46,14 +56,36 @@ const Menu = ({setPlayers, setStatus, setSize, setBoard, setCurrent}) => {
     const isCpuOnChange = (obj, setter) => e => setter(Object.assign({}, obj, {playerType: e.target.checked ? 0 : 1}));
 
     return (
-        <div className="menu">
+        <div className="card-body">
+            <h1 className="card-title">Menu</h1>
             <div className="center">
                 {error ? <div className="error">{error}</div> : null}
                 <form onSubmit={startGame}>
-                    <input type="text" value={player1.name} onChange={nameOnChange(player1, setPlayer1)}/>
-                    <input type="text" value={player2.name} onChange={nameOnChange(player2, setPlayer2)}/>
-                    <input type="checkbox" checked={player2.playerType === TYPES.CPU} onChange={isCpuOnChange(player2, setPlayer2)}/>
-                    <input type="submit" value="Start"/>
+                    <div className="form-group row">
+                        <label for="p1name" class="col-sm-4 col-form-label">Player 1 name</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="p1name" value={player1.name} onChange={nameOnChange(player1, setPlayer1)}/>
+                        </div>
+                    </div>
+                    <div className="form-group row">
+                        <label for="p2name" class="col-sm-4 col-form-label">Player 2 name</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="p2name" value={player2.name} onChange={nameOnChange(player2, setPlayer2)}/>
+                        </div>
+                    </div>
+                    <div className="form-group row">
+                        <label for="isCpu" class="col-sm-4 col-form-label">Player 2 is CPU</label>
+                        <div class="col-sm-8 col-form-label">
+                            <input type="checkbox" id="isCpu" checked={player2.playerType === TYPES.CPU} onChange={isCpuOnChange(player2, setPlayer2)}/>
+                        </div>
+                    </div>
+                    <div className="form-group row">
+                        <label for="isDark" class="col-sm-4 col-form-label">Dark theme</label>
+                        <div class="col-sm-8 col-form-label">
+                            <input type="checkbox" id="isDark" checked={dark} onChange={e => setDark(e.target.checked)}/>
+                        </div>
+                    </div>
+                    <input type="submit" class="btn btn-primary" value="Start"/>
                 </form>
             </div>
         </div>

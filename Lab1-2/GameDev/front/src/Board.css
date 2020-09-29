@@ -1,7 +1,24 @@
+.board-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.board-wrapper:after {
+    content: "";
+    display: block;
+    padding-bottom: 100%;
+}
+
+.board-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
 .board {
     position: relative;
-    width: 500px;
-    height: 500px;
+    width: 100%;
+    height: 100%;
     background: #009688;
 }
 

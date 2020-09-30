@@ -65,12 +65,12 @@ namespace Reversi.Services
 
         private List<Chip> GetAvailableChips(Chip chip)
         {
-            List<Chip> result = new List<Chip>();
+            List<Chip> availableChips = new List<Chip>();
             int tmpChipX, tmpChipY;
             
             foreach ((int x, int y) in GetDirectionVectors())
             {
-                bool hasOpponent = false;
+                bool hasOpponentChip = false;
 
                 for (int i = 0; i < Board.Size; i++)
                 {
@@ -84,19 +84,77 @@ namespace Reversi.Services
 
                     if (tmpChip != null && tmpChip.OwnerId != chip.OwnerId)
                     {
-                        hasOpponent = true;
+                        hasOpponentChip = true;
                         continue;
                     }
 
-                    if (tmpChip == null && hasOpponent)
+                    if (tmpChip == null && hasOpponentChip)
                     {
-                        result.Add(new Chip() { OwnerId = chip.OwnerId, PosY = tmpChipY, PosX = tmpChipX });
+                        availableChips.Add(new Chip() { OwnerId = chip.OwnerId, PosY = tmpChipY, PosX = tmpChipX });
                         break;
                     }
                 }
             }
 
-            return result;
+            return availableChips;
+        }
+
+        public List<Chip> GetFlippedChips(Chip chip)
+        {
+            List<Chip> flippedChips = new List<Chip>();
+            int tmpChipX, tmpChipY;
+
+            foreach ((int x, int y) in GetDirectionVectors())
+            {
+                bool hasAllyChip = false;
+
+                List<Chip> tmpChips = new List<Chip>();
+
+                for (int i = 0; i < Board.Size; i++)
+                {
+                    tmpChipX = chip.PosX + (i * x);
+                    tmpChipY = chip.PosY + (i * y);
+
+                    if (!IsInBoardIndex(tmpChipX) || !IsInBoardIndex(tmpChipY))
+                        break;
+
+                    Chip tmpChip = Board.Chips[tmpChipY][tmpChipX];
+
+                    if (tmpChip == null)
+                        break;
+
+                    if (tmpChip != null && tmpChip.OwnerId != chip.OwnerId)
+                    {
+
+                        tmpChips.Add(tmpChip);
+                    }
+
+                    if (tmpChip != null && tmpChip.OwnerId == chip.OwnerId)
+                    {
+                        hasAllyChip = true;
+                        break;
+                    }
+                }
+
+                if (hasAllyChip)
+                {
+                    foreach (Chip tmpChip in tmpChips)
+                    {
+                        Board.Chips[tmpChip.PosY][tmpChip.PosX].OwnerId = chip.OwnerId;
+                    }
+
+                    flippedChips.AddRange(tmpChips);
+                }
+            }
+
+            // tmp
+
+            foreach (Chip tmpChip in flippedChips)
+            {
+                Board.Chips[tmpChip.PosY][tmpChip.PosX].OwnerId = chip.OwnerId;
+            }
+
+            return flippedChips;
         }
 
         private bool IsInBoardIndex (int index)

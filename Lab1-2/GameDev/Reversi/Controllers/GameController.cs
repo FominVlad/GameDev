@@ -25,7 +25,7 @@ namespace Reversi.Controllers
         {
             GameService.Players.Where(player => player.Id == playerId).FirstOrDefault().PlayerManager.DoStep(playerId, chip);
 
-
+            
             return Ok();
         }
     }

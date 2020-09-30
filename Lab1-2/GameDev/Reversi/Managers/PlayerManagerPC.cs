@@ -30,6 +30,8 @@ namespace Reversi.Managers
 
             GameService.Board.Chips[chosenChip.PosY][chosenChip.PosX] = chosenChip;
 
+            GameService.GetFlippedChips(chosenChip);
+
             return true;
         }
     }

@@ -35,8 +35,6 @@ namespace Reversi.Services
             }
         }
 
-        
-
         public void CreateBoard(Board board)
         {
             if (board == null)
@@ -49,24 +47,23 @@ namespace Reversi.Services
         {
             List<Chip> availableChips = new List<Chip>();
 
-            foreach (List<Chip> chips in Board.Chips)
+            foreach (Chip chip in GetPlayerChips(playerId))
             {
-                foreach (Chip chip in chips.Where(chip => chip != null && chip.OwnerId == playerId))
+                foreach (Chip availableChip in GetAvailableChips(chip))
                 {
-                    foreach (Chip availableChip in CheckChips(chip))
-                    {
-                        if (Board.Chips[availableChip.PosY][availableChip.PosX] == null)
-                        {
-                            availableChips.Add(availableChip);
-                        }
-                    }
+                    availableChips.Add(availableChip);
                 }
             }
 
             return availableChips;
         }
 
-        private List<Chip> CheckChips(Chip chip)
+        private IEnumerable<Chip> GetPlayerChips(int playerId)
+        {
+            return Board.Chips.SelectMany(chipList => chipList.Where(chip => chip?.OwnerId == playerId));
+        }
+
+        private List<Chip> GetAvailableChips(Chip chip)
         {
             List<Chip> result = new List<Chip>();
             int tmpChipX, tmpChipY;
@@ -120,185 +117,6 @@ namespace Reversi.Services
                 (-1, 1),
                 (-1, 0)
             };
-        }
-
-        /*private List<Chip> CheckChips(Chip chip)
-        {
-            List<Chip> result = new List<Chip>();
-
-            for (int i = 0; i < Board.Size; i++)
-            {
-                if (i < chip.PosX &&
-                    Board.Chips[chip.PosY][i] == null && 
-                    Board.Chips[chip.PosY][i + 1] != null &&
-                    Board.Chips[chip.PosY][i + 1].OwnerId != chip.OwnerId)
-                {
-                    result.Add(new Chip() { OwnerId = chip.OwnerId, PosY = chip.PosY, PosX = i });
-                }
-
-                if (i > chip.PosX &&
-                    Board.Chips[chip.PosY][i] == null &&
-                    Board.Chips[chip.PosY][i - 1] != null &&
-                    Board.Chips[chip.PosY][i - 1].OwnerId != chip.OwnerId)
-                {
-                    result.Add(new Chip() { OwnerId = chip.OwnerId, PosY = chip.PosY, PosX = i });
-                }
-
-                if (i < chip.PosY &&
-                    Board.Chips[i][chip.PosX] == null &&
-                    Board.Chips[i + 1][chip.PosX] != null &&
-                    Board.Chips[i + 1][chip.PosX].OwnerId != chip.OwnerId)
-                {
-                    result.Add(new Chip() { OwnerId = chip.OwnerId, PosY = i, PosX = chip.PosX });
-                }
-
-                if (i > chip.PosY &&
-                    Board.Chips[i][chip.PosX] == null &&
-                    Board.Chips[i - 1][chip.PosX] != null &&
-                    Board.Chips[i - 1][chip.PosX].OwnerId != chip.OwnerId)
-                {
-                    result.Add(new Chip() { OwnerId = chip.OwnerId, PosY = i, PosX = chip.PosX });
-                }
-
-                if (chip.PosY - i >= 0 &&
-                    chip.PosX - i >= 0 &&
-                    Board.Chips[chip.PosY - i][chip.PosX - i] == null &&
-                    Board.Chips[chip.PosY - i + 1][chip.PosX - i + 1] != null &&
-                    Board.Chips[chip.PosY - i + 1][chip.PosX - i + 1].OwnerId != chip.OwnerId)
-                {
-                    result.Add(new Chip() { OwnerId = chip.OwnerId, PosY = chip.PosY - i, PosX = chip.PosX - i });
-                }
-
-                if (chip.PosY + i < Board.Size &&
-                    chip.PosX + i < Board.Size &&
-                    Board.Chips[chip.PosY + i][chip.PosX + i] == null &&
-                    Board.Chips[chip.PosY + i - 1][chip.PosX + i - 1] != null &&
-                    Board.Chips[chip.PosY + i - 1][chip.PosX + i - 1].OwnerId != chip.OwnerId)
-                {
-                    result.Add(new Chip() { OwnerId = chip.OwnerId, PosY = chip.PosY + i, PosX = chip.PosX + i });
-                }
-
-                if (chip.PosY - i >= 0 &&
-                    chip.PosX + i < Board.Size &&
-                    Board.Chips[chip.PosY - i][chip.PosX + i] == null &&
-                    Board.Chips[chip.PosY - i + 1][chip.PosX + i - 1] != null &&
-                    Board.Chips[chip.PosY - i + 1][chip.PosX + i - 1].OwnerId != chip.OwnerId)
-                {
-                    result.Add(new Chip() { OwnerId = chip.OwnerId, PosY = chip.PosY - i, PosX = chip.PosX - i });
-                }
-
-                if (chip.PosY + i < Board.Size &&
-                    chip.PosX - i >= 0 &&
-                    Board.Chips[chip.PosY + i][chip.PosX - i] == null &&
-                    Board.Chips[chip.PosY + i - 1][chip.PosX - i + 1] != null &&
-                    Board.Chips[chip.PosY + i - 1][chip.PosX - i + 1].OwnerId != chip.OwnerId)
-                {
-                    result.Add(new Chip() { OwnerId = chip.OwnerId, PosY = chip.PosY + i, PosX = chip.PosX + i });
-                }
-            }
-
-            return result;
-        }*/
-
-        private List<Chip> GetFlippedChipsList(Chip chip)
-        {
-            List<Chip> result = new List<Chip>();
-
-            bool extremeXUp = false;
-            bool extremeXDown = false;
-            bool extremeYUp = false;
-            bool extremeYDown = false;
-            bool extremeMainDiagonalUp = false;
-            bool extremeMainDiagonalDown = false;
-            bool extremeSecondDiagonalUp = false;
-            bool extremeSecondDiagonalDown = false;
-
-            for (int i = 0; i < Board.Size; i++)
-            {
-                if (!extremeXUp &&
-                    chip.PosX - i > 0 &&
-                    Board.Chips[chip.PosY][chip.PosX - i] != null &&
-                    Board.Chips[chip.PosY][chip.PosX - i].OwnerId == chip.OwnerId &&
-                    Board.Chips[chip.PosY][chip.PosX - i - 1] != null &&
-                    Board.Chips[chip.PosY][chip.PosX - i - 1].OwnerId != chip.OwnerId)
-                {
-                    result.Add(new Chip() { OwnerId = chip.OwnerId, PosY = chip.PosY, PosX = i });
-                }
-
-                if (!extremeXDown &&
-                    i > chip.PosX &&
-                    Board.Chips[chip.PosY][i] == null &&
-                    Board.Chips[chip.PosY][i - 1] != null &&
-                    Board.Chips[chip.PosY][i - 1].OwnerId != chip.OwnerId)
-                {
-                    result.Add(new Chip() { OwnerId = chip.OwnerId, PosY = chip.PosY, PosX = i });
-                }
-
-                if (!extremeYUp &&
-                    i < chip.PosY &&
-                    Board.Chips[i][chip.PosX] == null &&
-                    Board.Chips[i + 1][chip.PosX] != null &&
-                    Board.Chips[i + 1][chip.PosX].OwnerId != chip.OwnerId)
-                {
-                    result.Add(new Chip() { OwnerId = chip.OwnerId, PosY = i, PosX = chip.PosX });
-                }
-
-                if (!extremeYDown &&
-                    i > chip.PosY &&
-                    Board.Chips[i][chip.PosX] == null &&
-                    Board.Chips[i - 1][chip.PosX] != null &&
-                    Board.Chips[i - 1][chip.PosX].OwnerId != chip.OwnerId)
-                {
-                    result.Add(new Chip() { OwnerId = chip.OwnerId, PosY = i, PosX = chip.PosX });
-                }
-
-                if (!extremeMainDiagonalUp &&
-                    chip.PosY - i >= 0 &&
-                    chip.PosX - i >= 0 &&
-                    Board.Chips[chip.PosY - i][chip.PosX - i] == null &&
-                    Board.Chips[chip.PosY - i + 1][chip.PosX - i + 1] != null &&
-                    Board.Chips[chip.PosY - i + 1][chip.PosX - i + 1].OwnerId != chip.OwnerId)
-                {
-                    result.Add(new Chip() { OwnerId = chip.OwnerId, PosY = chip.PosY - i, PosX = chip.PosX - i });
-                }
-
-                if (!extremeMainDiagonalDown &&
-                    chip.PosY + i < Board.Size &&
-                    chip.PosX + i < Board.Size &&
-                    Board.Chips[chip.PosY + i][chip.PosX + i] == null &&
-                    Board.Chips[chip.PosY + i - 1][chip.PosX + i - 1] != null &&
-                    Board.Chips[chip.PosY + i - 1][chip.PosX + i - 1].OwnerId != chip.OwnerId)
-                {
-                    result.Add(new Chip() { OwnerId = chip.OwnerId, PosY = chip.PosY + i, PosX = chip.PosX + i });
-                }
-
-                if (!extremeSecondDiagonalUp &&
-                    chip.PosY - i >= 0 &&
-                    chip.PosX + i < Board.Size &&
-                    Board.Chips[chip.PosY - i][chip.PosX + i] == null &&
-                    Board.Chips[chip.PosY - i + 1][chip.PosX + i - 1] != null &&
-                    Board.Chips[chip.PosY - i + 1][chip.PosX + i - 1].OwnerId != chip.OwnerId)
-                {
-                    result.Add(new Chip() { OwnerId = chip.OwnerId, PosY = chip.PosY - i, PosX = chip.PosX - i });
-                }
-
-                if (!extremeSecondDiagonalDown &&
-                    chip.PosY + i < Board.Size &&
-                    chip.PosX - i >= 0 &&
-                    Board.Chips[chip.PosY + i][chip.PosX - i] == null &&
-                    Board.Chips[chip.PosY + i - 1][chip.PosX - i + 1] != null &&
-                    Board.Chips[chip.PosY + i - 1][chip.PosX - i + 1].OwnerId != chip.OwnerId)
-                {
-                    result.Add(new Chip() { OwnerId = chip.OwnerId, PosY = chip.PosY + i, PosX = chip.PosX + i });
-                }
-            }
-
-            return result;
-        }
-
-        public void FlipChipsBetween()
-        {
-
         }
     }
 }

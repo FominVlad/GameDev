@@ -37,8 +37,8 @@ namespace Reversi.Models
             }
 
             Chips[boardMid - 1][boardMid - 1] = new Chip(players.FirstOrDefault().Id, boardMid - 1, boardMid - 1);
-            Chips[boardMid - 1][boardMid] = new Chip(players.LastOrDefault().Id, boardMid - 1, boardMid);
-            Chips[boardMid][boardMid - 1] = new Chip(players.LastOrDefault().Id, boardMid, boardMid - 1);
+            Chips[boardMid][boardMid - 1] = new Chip(players.LastOrDefault().Id, boardMid - 1, boardMid);
+            Chips[boardMid - 1][boardMid] = new Chip(players.LastOrDefault().Id, boardMid, boardMid - 1);
             Chips[boardMid][boardMid] = new Chip(players.FirstOrDefault().Id, boardMid, boardMid);
         }
     }

@@ -72,7 +72,7 @@ namespace Reversi.Services
             {
                 bool hasOpponentChip = false;
 
-                for (int i = 0; i < Board.Size; i++)
+                for (int i = 1; i < Board.Size; i++)
                 {
                     tmpChipX = chip.PosX + (i * x);
                     tmpChipY = chip.PosY + (i * y);
@@ -93,6 +93,11 @@ namespace Reversi.Services
                         availableChips.Add(new Chip() { OwnerId = chip.OwnerId, PosY = tmpChipY, PosX = tmpChipX });
                         break;
                     }
+
+                    if (tmpChip == null && !hasOpponentChip)
+                    {
+                        break;
+                    }
                 }
             }
 
@@ -110,7 +115,7 @@ namespace Reversi.Services
 
                 List<Chip> tmpChips = new List<Chip>();
 
-                for (int i = 0; i < Board.Size; i++)
+                for (int i = 1; i < Board.Size; i++)
                 {
                     tmpChipX = chip.PosX + (i * x);
                     tmpChipY = chip.PosY + (i * y);

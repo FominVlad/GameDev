@@ -121,14 +121,15 @@ namespace Reversi.Services
                         continue;
                     }
 
-                    if (tmpChip == null && hasOpponentChip)
+                    if ((tmpChip == null && !hasOpponentChip) ||
+                        (tmpChip != null && hasOpponentChip && tmpChip.OwnerId == chip.OwnerId))
                     {
-                        availableChips.Add(new Chip(chip.OwnerId, tmpChipX, tmpChipY));
                         break;
                     }
 
-                    if (tmpChip == null && !hasOpponentChip)
+                    if (tmpChip == null && hasOpponentChip)
                     {
+                        availableChips.Add(new Chip(chip.OwnerId, tmpChipX, tmpChipY));
                         break;
                     }
                 }

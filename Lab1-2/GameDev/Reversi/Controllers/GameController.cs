@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Reversi.Models;
+using Reversi.Models.DTO;
 using Reversi.Services;
 
 namespace Reversi.Controllers
@@ -13,20 +14,79 @@ namespace Reversi.Controllers
     [ApiController]
     public class GameController : ControllerBase
     {
-        private GameService GameService { get; set; }
+        private BoardService BoardService { get; set; }
+        private PlayerService PlayerService { get; set; }
 
-        public GameController(GameService gameService)
+        public GameController(PlayerService playerService, BoardService boardService)
         {
-            this.GameService = gameService;
+            this.PlayerService = playerService;
+            this.BoardService = boardService;
         }
 
-        [HttpPost]
-        public IActionResult DoStep(int playerId, [FromBody]Chip chip)
+        /// <summary>
+        /// Method to initialize game parameters.
+        /// </summary>
+        /// <param name="boardSize">Future board size.</param>
+        /// <param name="players">Players list.</param>
+        /// <returns>Game parameters.</returns>
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult InitGame(int boardSize, List<PlayerCreateDTO> players)
         {
-            GameService.Players.Where(player => player.Id == playerId).FirstOrDefault().PlayerManager.DoStep(playerId, chip);
+            try
+            {
+                PlayerService.InitPlayers(players);
+                BoardService.InitBoard(boardSize, PlayerService.Players);
 
-            
-            return Ok();
+                return StatusCode(201, new { players = PlayerService.Players, 
+                    board = BoardService.Board.GetChipsList() });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Method to get available steps for player.
+        /// </summary>
+        /// <param name="playerId">Player unique identifier.</param>
+        /// <returns>Available steps list.</returns>
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult GetAvailableSteps(int playerId)
+        {
+            try
+            {
+                return StatusCode(200, BoardService.GetAvailableSteps(playerId));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Method to do step by player.
+        /// </summary>
+        /// <param name="playerId">Unique identifier of the player that doing step.</param>
+        /// <param name="chipDoStepDTO">The chip we do a step.</param>
+        /// <returns>Flipped chips list.</returns>
+        [HttpPatch]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult DoStep(int playerId, ChipDoStepDTO chipDoStepDTO)
+        {
+            try
+            {
+                return StatusCode(200, PlayerService.DoStep(playerId, chipDoStepDTO));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, ex.Message);
+            }
         }
     }
 }

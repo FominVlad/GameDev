@@ -9,15 +9,31 @@ namespace Reversi.Managers
 {
     public class PlayerManagerHuman : IPlayerManager
     {
-        private GameService GameService { get; set; }
-        public PlayerManagerHuman(GameService gameService)
+        private BoardService BoardService { get; set; }
+        private PlayerService PlayerService { get; set; }
+        public PlayerManagerHuman(BoardService boardService, PlayerService playerService)
         {
-            this.GameService = gameService;
+            this.BoardService = boardService;
+            this.PlayerService = playerService;
         }
 
-        public bool DoStep(int playerId, Chip chip)
+        public List<Chip> DoStep(int playerId, Chip chip)
         {
-            throw new NotImplementedException();
+            List<Chip> availableChips = BoardService.GetAvailableSteps(playerId);
+            List<Chip> flippedChips = new List<Chip>();
+
+            if (availableChips.Count == 0 || !availableChips.Contains(chip))
+                return flippedChips;
+
+            BoardService.AddChipToBoard(chip);
+
+            flippedChips = BoardService.GetFlippedChips(chip);
+
+            BoardService.FlipChips(flippedChips, PlayerService.Players);
+
+            flippedChips.Add(chip);
+
+            return flippedChips;
         }
     }
 }

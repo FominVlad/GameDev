@@ -26,7 +26,8 @@ namespace Reversi
             services.AddJsEngineSwitcher(options => options.DefaultEngineName = ChakraCoreJsEngine.EngineName).AddChakraCore();
 
             services.AddControllers(x => x.AllowEmptyInputInBodyModelBinding = true);
-            services.AddGameService();
+            services.AddBoardService();
+            services.AddPlayerService();
 
             services.AddSwaggerGen(c =>
             {

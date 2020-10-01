@@ -8,6 +8,6 @@ namespace Reversi.Managers
 {
     public interface IPlayerManager
     {
-        public bool DoStep(int playerId, Chip chip);
+        public List<Chip> DoStep(int playerId, Chip chip);
     }
 }

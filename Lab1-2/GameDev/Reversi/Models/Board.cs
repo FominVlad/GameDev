@@ -8,22 +8,22 @@ namespace Reversi.Models
 {
     public class Board
     {
-        [Range(4, 8, ErrorMessage = "Board size must be between 4 and 8")]
-        [Multiple(2, ErrorMessage = "Size must be multiple of 2.")]
-        public int Size { get; set; }
-        //[Required(ErrorMessage = "List of chips can`t be null.")]
+        public int Size { get; private set; }
         public List<List<Chip>> Chips { get; private set; }
 
         public Board(int size)
         {
             this.Size = size;
+            FillEmptyChipList();
         }
 
-        public Board() { }
-
-        public void FillBoard(List<Player> players)
+        public List<Chip> GetChipsList()
         {
-            int boardMid = Size / 2;
+            return Chips.SelectMany(chipList => chipList.Where(chip => chip != null)).ToList();
+        }
+
+        private void FillEmptyChipList()
+        {
             Chips = new List<List<Chip>>();
 
             for (int i = 0; i < Size; i++)
@@ -35,6 +35,11 @@ namespace Reversi.Models
                     Chips[i].Add(null);
                 }
             }
+        }
+
+        public void FillBoardInitialValues(List<Player> players)
+        {
+            int boardMid = Size / 2;
 
             Chips[boardMid - 1][boardMid - 1] = new Chip(players.FirstOrDefault().Id, boardMid - 1, boardMid - 1);
             Chips[boardMid][boardMid - 1] = new Chip(players.LastOrDefault().Id, boardMid - 1, boardMid);

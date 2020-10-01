@@ -1,4 +1,5 @@
 ﻿using Reversi.Managers;
+using Reversi.Models.DTO;
 using Reversi.Services;
 using System;
 using System.Collections.Generic;
@@ -12,28 +13,37 @@ namespace Reversi.Models
         Human = 1
     }
 
+    public enum PlayerColour
+    {
+        Black = 0,
+        White = 1
+    }
+
     public class Player
     {
         public int Id { get; private set; }
         public string Name { get; private set; }
 
-        public PlayerType PlayerType { private get; set; }
+        public PlayerType PlayerType { get; private set; }
+
+        public PlayerColour PlayerColour { get; private set; }
 
         public IPlayerManager PlayerManager { get; private set; }
 
-        public Player(int id, PlayerType playerType, string name, GameService gameService)
+        public Player (PlayerCreateDTO playerCreateDTO, int playerId, BoardService boardService, PlayerService playerService)
         {
-            this.Id = id;
-            this.PlayerType = playerType;
-            this.Name = name;
+            this.Id = playerId;
+            this.Name = playerCreateDTO.Name;
+            this.PlayerType = playerCreateDTO.PlayerType;
+            this.PlayerColour = playerCreateDTO.PlayerColour;
 
-            if (playerType == PlayerType.PC)
+            if (playerCreateDTO.PlayerType == PlayerType.PC)
             {
-                PlayerManager = new PlayerManagerPC(gameService);
+                PlayerManager = new PlayerManagerPC(boardService, playerService);
             }
             else
             {
-                PlayerManager = new PlayerManagerHuman(gameService);
+                PlayerManager = new PlayerManagerHuman(boardService, playerService);
             }
         }
     }

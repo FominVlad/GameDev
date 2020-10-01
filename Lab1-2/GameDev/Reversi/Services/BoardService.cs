@@ -1,0 +1,160 @@
+﻿using Reversi.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace Reversi.Services
+{
+    public class BoardService
+    {
+        public Board Board { get; private set; }
+
+        public void InitBoard(int boardSize, List<Player> players)
+        {
+            Board = new Board(boardSize);
+            Board.FillBoardInitialValues(players);
+        }
+
+        public void AddChipToBoard(Chip chip)
+        {
+            Board.Chips[chip.PosY][chip.PosX] = chip;
+        }
+
+        public void FlipChips(List<Chip> chips, List<Player> players)
+        {
+            int newOwnerId = players
+                .Where(player => player.Id != chips.FirstOrDefault().OwnerId)
+                .Select(player => player.Id).FirstOrDefault();
+
+            foreach (Chip chip in chips)
+            {
+                Board.Chips[chip.PosY][chip.PosX].OwnerId = newOwnerId;
+            }
+        }
+
+        public List<Chip> GetAvailableSteps(int playerId)
+        {
+            List<Chip> availableChips = new List<Chip>();
+
+            foreach (Chip chip in GetPlayerChips(playerId))
+            {
+                foreach (Chip availableChip in GetAvailableChips(chip))
+                {
+                    availableChips.Add(availableChip);
+                }
+            }
+
+            return availableChips;
+        }
+
+        public List<Chip> GetFlippedChips(Chip chip)
+        {
+            List<Chip> flippedChips = new List<Chip>();
+            int tmpChipX, tmpChipY;
+
+            foreach ((int x, int y) in GetDirectionVectors())
+            {
+                bool hasAllyChip = false;
+
+                List<Chip> tmpChips = new List<Chip>();
+
+                for (int i = 1; i < Board.Size; i++)
+                {
+                    tmpChipX = chip.PosX + (i * x);
+                    tmpChipY = chip.PosY + (i * y);
+
+                    if (!IsInBoardIndex(tmpChipX) || !IsInBoardIndex(tmpChipY))
+                        break;
+
+                    Chip tmpChip = Board.Chips[tmpChipY][tmpChipX];
+
+                    if (tmpChip == null)
+                        break;
+
+                    if (tmpChip != null && tmpChip.OwnerId != chip.OwnerId)
+                        tmpChips.Add(tmpChip);
+
+                    if (tmpChip != null && tmpChip.OwnerId == chip.OwnerId)
+                    {
+                        hasAllyChip = true;
+                        break;
+                    }
+                }
+
+                if (hasAllyChip)
+                {
+                    flippedChips.AddRange(tmpChips);
+                }
+            }
+
+            return flippedChips;
+        }
+
+        private IEnumerable<Chip> GetPlayerChips(int playerId)
+        {
+            return Board.Chips.SelectMany(chipList => chipList.Where(chip => chip?.OwnerId == playerId));
+        }
+
+        private List<Chip> GetAvailableChips(Chip chip)
+        {
+            List<Chip> availableChips = new List<Chip>();
+            int tmpChipX, tmpChipY;
+
+            foreach ((int x, int y) in GetDirectionVectors())
+            {
+                bool hasOpponentChip = false;
+
+                for (int i = 1; i < Board.Size; i++)
+                {
+                    tmpChipX = chip.PosX + (i * x);
+                    tmpChipY = chip.PosY + (i * y);
+
+                    if (!IsInBoardIndex(tmpChipX) || !IsInBoardIndex(tmpChipY))
+                        break;
+
+                    Chip tmpChip = Board.Chips[tmpChipY][tmpChipX];
+
+                    if (tmpChip != null && tmpChip.OwnerId != chip.OwnerId)
+                    {
+                        hasOpponentChip = true;
+                        continue;
+                    }
+
+                    if (tmpChip == null && hasOpponentChip)
+                    {
+                        availableChips.Add(new Chip(chip.OwnerId, tmpChipX, tmpChipY));
+                        break;
+                    }
+
+                    if (tmpChip == null && !hasOpponentChip)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return availableChips;
+        }
+
+        private bool IsInBoardIndex(int index)
+        {
+            return index < Board.Size && index >= 0;
+        }
+
+        private List<(int, int)> GetDirectionVectors()
+        {
+            return new List<(int, int)>()
+            {
+                (-1, -1),
+                (0, -1),
+                (1, -1),
+                (1, 0),
+                (1, 1),
+                (0, 1),
+                (-1, 1),
+                (-1, 0)
+            };
+        }
+    }
+}

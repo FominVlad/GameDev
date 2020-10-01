@@ -1,8 +1,6 @@
 ﻿using Reversi.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Reversi.Services
 {
@@ -51,7 +49,6 @@ namespace Reversi.Services
         public List<Chip> GetFlippedChips(Chip chip)
         {
             List<Chip> flippedChips = new List<Chip>();
-            int tmpChipX, tmpChipY;
 
             foreach ((int x, int y) in GetDirectionVectors())
             {
@@ -61,8 +58,8 @@ namespace Reversi.Services
 
                 for (int i = 1; i < Board.Size; i++)
                 {
-                    tmpChipX = chip.PosX + (i * x);
-                    tmpChipY = chip.PosY + (i * y);
+                    int tmpChipX = chip.PosX + (i * x);
+                    int tmpChipY = chip.PosY + (i * y);
 
                     if (!IsInBoardIndex(tmpChipX) || !IsInBoardIndex(tmpChipY))
                         break;
@@ -83,9 +80,7 @@ namespace Reversi.Services
                 }
 
                 if (hasAllyChip)
-                {
                     flippedChips.AddRange(tmpChips);
-                }
             }
 
             return flippedChips;
@@ -93,22 +88,22 @@ namespace Reversi.Services
 
         private IEnumerable<Chip> GetPlayerChips(int playerId)
         {
-            return Board.Chips.SelectMany(chipList => chipList.Where(chip => chip?.OwnerId == playerId));
+            return Board.Chips.SelectMany(chipList => 
+                chipList.Where(chip => chip?.OwnerId == playerId));
         }
 
         private List<Chip> GetAvailableChips(Chip chip)
         {
             List<Chip> availableChips = new List<Chip>();
-            int tmpChipX, tmpChipY;
-
+            
             foreach ((int x, int y) in GetDirectionVectors())
             {
                 bool hasOpponentChip = false;
 
                 for (int i = 1; i < Board.Size; i++)
                 {
-                    tmpChipX = chip.PosX + (i * x);
-                    tmpChipY = chip.PosY + (i * y);
+                    int tmpChipX = chip.PosX + (i * x);
+                    int tmpChipY = chip.PosY + (i * y);
 
                     if (!IsInBoardIndex(tmpChipX) || !IsInBoardIndex(tmpChipY))
                         break;
@@ -123,9 +118,7 @@ namespace Reversi.Services
 
                     if ((tmpChip == null && !hasOpponentChip) ||
                         (tmpChip != null && hasOpponentChip && tmpChip.OwnerId == chip.OwnerId))
-                    {
                         break;
-                    }
 
                     if (tmpChip == null && hasOpponentChip)
                     {

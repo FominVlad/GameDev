@@ -2,8 +2,6 @@
 using Reversi.Services;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Reversi.Managers
 {
@@ -26,9 +24,7 @@ namespace Reversi.Managers
             if (availableChips.Count == 0)
                 return flippedChips;
 
-            Random random = new Random();
-
-            Chip chosenChip = availableChips[random.Next(0, availableChips.Count)];
+            Chip chosenChip = availableChips[new Random().Next(0, availableChips.Count)];
 
             BoardService.AddChipToBoard(chosenChip);
 

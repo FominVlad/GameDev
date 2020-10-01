@@ -1,7 +1,4 @@
-﻿using Reversi.ValidationAttributes;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Reversi.Models

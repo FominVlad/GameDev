@@ -1,9 +1,7 @@
 ﻿using Reversi.Models;
 using Reversi.Models.DTO;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Reversi.Services
 {
@@ -19,7 +17,8 @@ namespace Reversi.Services
 
         public void InitPlayers(List<PlayerCreateDTO> players)
         {
-            Players = players.Select((playerDTO, index) => new Player(playerDTO, index, BoardService, this)).ToList();
+            Players = players.Select((playerDTO, index) => 
+                new Player(playerDTO, index, BoardService, this)).ToList();
         }
 
         public List<Chip> DoStep(int playerId, ChipDoStepDTO chipDoStepDTO)

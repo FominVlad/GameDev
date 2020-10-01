@@ -1,10 +1,6 @@
 ﻿using Reversi.Managers;
 using Reversi.Models.DTO;
 using Reversi.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Reversi.Models
 {
@@ -30,7 +26,8 @@ namespace Reversi.Models
 
         public IPlayerManager PlayerManager { get; private set; }
 
-        public Player (PlayerCreateDTO playerCreateDTO, int playerId, BoardService boardService, PlayerService playerService)
+        public Player (PlayerCreateDTO playerCreateDTO, int playerId, 
+            BoardService boardService, PlayerService playerService)
         {
             this.Id = playerId;
             this.Name = playerCreateDTO.Name;
@@ -38,13 +35,9 @@ namespace Reversi.Models
             this.PlayerColour = playerCreateDTO.PlayerColour;
 
             if (playerCreateDTO.PlayerType == PlayerType.PC)
-            {
                 PlayerManager = new PlayerManagerPC(boardService, playerService);
-            }
             else
-            {
                 PlayerManager = new PlayerManagerHuman(boardService, playerService);
-            }
         }
     }
 }

@@ -1,9 +1,6 @@
 ﻿using Reversi.Models;
 using Reversi.Services;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Reversi.Managers
 {
@@ -22,7 +19,8 @@ namespace Reversi.Managers
             List<Chip> availableChips = BoardService.GetAvailableSteps(playerId);
             List<Chip> flippedChips = new List<Chip>();
 
-            if (availableChips.Count == 0 || !availableChips.Contains(chip))
+            if (availableChips.Count == 0 || 
+                !availableChips.Contains(chip))
                 return flippedChips;
 
             BoardService.AddChipToBoard(chip);

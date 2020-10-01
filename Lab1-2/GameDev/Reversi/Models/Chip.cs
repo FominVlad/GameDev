@@ -1,9 +1,6 @@
 ﻿using Reversi.Models.DTO;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Reversi.Models
 {
@@ -43,16 +40,10 @@ namespace Reversi.Models
         {
             Chip chip = obj as Chip;
 
-            if (chip == null)
-                throw new Exception("Object obj is not Chip type.");
-
-            if (chip.OwnerId != this.OwnerId)
-                return false;
-
-            if (chip.PosX != this.PosX)
-                return false;
-
-            if (chip.PosY != this.PosY)
+            if (chip == null ||
+                chip.OwnerId != this.OwnerId ||
+                chip.PosX != this.PosX ||
+                chip.PosY != this.PosY)
                 return false;
 
             return true;

@@ -14,7 +14,7 @@ namespace Reversi.Services
         private BoardService BoardService { get; set; }
         public List<Player> Players { get; private set; }
 
-        public int NextStepPlayerId { get; private set; }
+        public int? NextStepPlayerId { get; private set; }
 
         public PlayerService(BoardService boardService)
         {
@@ -26,7 +26,7 @@ namespace Reversi.Services
         /// </summary>
         /// <param name="players">Players parameters for initializing.</param>
         /// <returns>Initialized players.</returns>
-        public List<Player> InitPlayers(List<PlayerCreateDTO> players)
+        public List<PlayerGetDTO> InitPlayers(List<PlayerCreateDTO> players)
         {
             Players = players.Select((playerDTO, index) => 
                 new Player(playerDTO, index, BoardService, this)).ToList();
@@ -35,7 +35,7 @@ namespace Reversi.Services
                 player.PlayerColour == PlayerColour.Black).
                 Select(player => player.Id).FirstOrDefault();
 
-            return Players;
+            return Players.Select(player => new PlayerGetDTO(player)).ToList();
         }
 
         /// <summary>
@@ -54,27 +54,30 @@ namespace Reversi.Services
             List <Chip> changedChips = Players.Where(player => player.Id == playerId)
                 .FirstOrDefault().PlayerManager.DoStep(playerId, chipForStep);
 
-            if (changedChips.Count != 0)
-                SetNextStepPlayerId(playerId);
+            SetNextStepPlayerId(playerId);
 
             return changedChips;
         }
 
         private void SetNextStepPlayerId(int currStepPlayerId)
         {
-            NextStepPlayerId = Players.Where(player => player.Id != currStepPlayerId)
+            int? tmpNextStepPlayerId = Players.Where(player => player.Id != currStepPlayerId)
                 .Select(player => player.Id).FirstOrDefault();
+
+            if (BoardService.GetAvailableSteps(tmpNextStepPlayerId ?? -1).Count == 0)
+            {
+                tmpNextStepPlayerId = currStepPlayerId;
+
+                if (BoardService.GetAvailableSteps(currStepPlayerId).Count == 0)
+                    tmpNextStepPlayerId = null;
+            }
+
+            NextStepPlayerId = tmpNextStepPlayerId;
         }
 
         public bool CheckNextStepPlayerId(int currStepPlayerId)
         {
-            if (NextStepPlayerId == currStepPlayerId)
-                return true;
-
-            if (BoardService.GetAvailableSteps(NextStepPlayerId).Count == 0)
-                return true;
-
-            return false;
+            return NextStepPlayerId == currStepPlayerId;
         }
     }
 }

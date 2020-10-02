@@ -14,12 +14,12 @@ namespace Reversi.Services
         /// <param name="boardSize">Board size</param>
         /// <param name="players">Players list</param>
         /// <returns>Initialized board.</returns>
-        public Board InitBoard(int boardSize, List<Player> players)
+        public List<Chip> InitBoard(int boardSize, List<Player> players)
         {
             Board = new Board(boardSize);
             Board.FillBoardInitialValues(players);
 
-            return Board;
+            return Board.OccupiedChips;
         }
 
         /// <summary>

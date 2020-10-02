@@ -33,11 +33,11 @@ namespace Reversi.Controllers
         {
             try
             {
-                PlayerService.InitPlayers(players);
-                BoardService.InitBoard(boardSize, PlayerService.Players);
-
-                return StatusCode(201, new { players = PlayerService.Players, 
-                    board = BoardService.Board.OccupiedChips
+                return StatusCode(201, new 
+                { 
+                    players = PlayerService.InitPlayers(players), 
+                    board = BoardService.InitBoard(boardSize, PlayerService.Players),
+                    nextStepPlayerId = PlayerService.NextStepPlayerId 
                 });
             }
             catch (Exception ex)
@@ -79,7 +79,11 @@ namespace Reversi.Controllers
         {
             try
             {
-                return StatusCode(200, PlayerService.DoStep(playerId, chipDoStepDTO));
+                return StatusCode(200, new
+                {
+                    changedChips = PlayerService.DoStep(playerId, chipDoStepDTO),
+                    nextStepPlayerId = PlayerService.NextStepPlayerId
+                });
             }
             catch (Exception ex)
             {

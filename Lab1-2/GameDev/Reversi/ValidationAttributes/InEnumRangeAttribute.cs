@@ -17,8 +17,9 @@ namespace Reversi.ValidationAttributes
 
         public override bool IsValid(object value)
         {
-            if (!Int32.TryParse(value.ToString(), out int index))
-                throw new Exception("Object value is not `Int32` type.");
+            if (!Int32.TryParse(value.ToString(), out int index) &&
+                Enum.Parse(EnumType, value.ToString()) != null)
+                return true;
 
             int maxEnumIndex = Enum.GetValues(EnumType).Length;
 

@@ -37,7 +37,8 @@ namespace Reversi.Controllers
                 BoardService.InitBoard(boardSize, PlayerService.Players);
 
                 return StatusCode(201, new { players = PlayerService.Players, 
-                    board = BoardService.Board.GetChipsList() });
+                    board = BoardService.Board.OccupiedChips
+                });
             }
             catch (Exception ex)
             {

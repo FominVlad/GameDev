@@ -7,16 +7,18 @@ namespace Reversi.Models
     {
         public int Size { get; private set; }
         public List<List<Chip>> Chips { get; private set; }
+        public List<Chip> OccupiedChips {
+            get
+            {
+                return Chips.SelectMany(chipList =>
+                    chipList.Where(chip => chip != null)).ToList();
+            }
+        }
 
         public Board(int size)
         {
             this.Size = size;
             FillEmptyChipList();
-        }
-
-        public List<Chip> GetChipsList()
-        {
-            return Chips.SelectMany(chipList => chipList.Where(chip => chip != null)).ToList();
         }
 
         private void FillEmptyChipList()

@@ -155,7 +155,7 @@ namespace Reversi.Services
                 }
             }
 
-            return availableChips;
+            return availableChips.Distinct().ToList();
         }
 
         private bool IsInBoardIndex(int index)

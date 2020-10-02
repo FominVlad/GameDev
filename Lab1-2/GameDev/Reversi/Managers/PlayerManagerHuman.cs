@@ -14,6 +14,12 @@ namespace Reversi.Managers
             this.PlayerService = playerService;
         }
 
+        /// <summary>
+        /// Method for the player do step.
+        /// </summary>
+        /// <param name="playerId">Player that do step.</param>
+        /// <param name="chip">The chip that done step.</param>
+        /// <returns>Changed chips list.</returns>
         public List<Chip> DoStep(int playerId, Chip chip)
         {
             List<Chip> availableChips = BoardService.GetAvailableSteps(playerId);

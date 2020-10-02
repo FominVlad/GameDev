@@ -8,17 +8,34 @@ namespace Reversi.Services
     {
         public Board Board { get; private set; }
 
-        public void InitBoard(int boardSize, List<Player> players)
+        /// <summary>
+        /// Method for initialize board.
+        /// </summary>
+        /// <param name="boardSize">Board size</param>
+        /// <param name="players">Players list</param>
+        /// <returns>Initialized board.</returns>
+        public Board InitBoard(int boardSize, List<Player> players)
         {
             Board = new Board(boardSize);
             Board.FillBoardInitialValues(players);
+
+            return Board;
         }
 
+        /// <summary>
+        /// Add chip to board.
+        /// </summary>
+        /// <param name="chip">Chip to add.</param>
         public void AddChipToBoard(Chip chip)
         {
             Board.Chips[chip.PosY][chip.PosX] = chip;
         }
 
+        /// <summary>
+        /// Method for flipping chips.
+        /// </summary>
+        /// <param name="chips">Chips to flip.</param>
+        /// <param name="players">Players list.</param>
         public void FlipChips(List<Chip> chips, List<Player> players)
         {
             int newOwnerId = players
@@ -31,6 +48,11 @@ namespace Reversi.Services
             }
         }
 
+        /// <summary>
+        /// Method to get available steps for player.
+        /// </summary>
+        /// <param name="playerId">Player unique identifier.</param>
+        /// <returns>Available steps (chips) list.</returns>
         public List<Chip> GetAvailableSteps(int playerId)
         {
             List<Chip> availableChips = new List<Chip>();
@@ -46,6 +68,11 @@ namespace Reversi.Services
             return availableChips;
         }
 
+        /// <summary>
+        /// Method to get flipped chips list (after step).
+        /// </summary>
+        /// <param name="chip">The chip that done step.</param>
+        /// <returns>Flipped chips list.</returns>
         public List<Chip> GetFlippedChips(Chip chip)
         {
             List<Chip> flippedChips = new List<Chip>();

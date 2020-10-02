@@ -1,22 +1,11 @@
 ﻿using Reversi.Models.DTO;
-using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace Reversi.Models
 {
     public class Chip
     {
-        /// <summary>
-        /// Chip owner unique id.
-        /// </summary>
         public int OwnerId { get; set; }
-        /// <summary>
-        /// Chip position (X).
-        /// </summary>
         public int PosX { get; set; }
-        /// <summary>
-        /// Chip position (Y).
-        /// </summary>
         public int PosY { get; set; }
 
         public Chip(ChipDoStepDTO chipDoStepDTO, int playerId) 

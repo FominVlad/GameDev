@@ -1,7 +1,5 @@
 ﻿using Reversi.ValidationAttributes;
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
 namespace Reversi.Models.DTO
 {

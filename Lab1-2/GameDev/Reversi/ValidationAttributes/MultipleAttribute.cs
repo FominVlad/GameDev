@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Reversi.ValidationAttributes
 {
+    /// <summary>
+    /// Attribute for checking the multiplicity of a number.
+    /// </summary>
     public class MultipleAttribute : ValidationAttribute
     {
         private int Divider { get; set; }

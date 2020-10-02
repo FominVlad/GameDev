@@ -1,12 +1,11 @@
-﻿using Reversi.Models;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Reversi.ValidationAttributes
 {
+    /// <summary>
+    /// Attribute for checking index in enum range.
+    /// </summary>
     public class InEnumRangeAttribute : ValidationAttribute
     {
         private Type EnumType { get; set; }

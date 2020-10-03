@@ -1,5 +1,6 @@
 ﻿using Reversi.Models;
 using Reversi.Services;
+using System;
 using System.Collections.Generic;
 
 namespace Reversi.Managers
@@ -22,6 +23,9 @@ namespace Reversi.Managers
         /// <returns>Changed chips list.</returns>
         public List<Chip> DoStep(int playerId, Chip chip)
         {
+            if (chip == null)
+                throw new Exception("Chip can`t be null!");
+
             List<Chip> availableChips = BoardService.GetAvailableSteps(playerId);
             List<Chip> flippedChips = new List<Chip>();
 

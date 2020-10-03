@@ -28,6 +28,9 @@ namespace Reversi.Services
         /// <returns>Initialized players.</returns>
         public List<PlayerGetDTO> InitPlayers(List<PlayerCreateDTO> players)
         {
+            if (players.Count != 2)
+                throw new Exception("Players count must be 2.");
+
             Players = players.Select((playerDTO, index) => 
                 new Player(playerDTO, index, BoardService, this)).ToList();
 
@@ -46,6 +49,11 @@ namespace Reversi.Services
         /// <returns>Changed chips list.</returns>
         public List<Chip> DoStep(int playerId, ChipDoStepDTO chipDoStepDTO)
         {
+            if (!BoardService.CheckInitBoard())
+                throw new Exception("Board is not initialized.");
+            if (Players == null)
+                throw new Exception("Players is not initialized.");
+
             if (!CheckNextStepPlayerId(playerId))
                 throw new Exception("This player is not in the step queue.");
 

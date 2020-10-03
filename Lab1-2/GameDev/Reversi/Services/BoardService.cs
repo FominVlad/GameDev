@@ -1,4 +1,5 @@
 ﻿using Reversi.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -55,6 +56,9 @@ namespace Reversi.Services
         /// <returns>Available steps (chips) list.</returns>
         public List<Chip> GetAvailableSteps(int playerId)
         {
+            if (!CheckInitBoard())
+                throw new Exception("Board is not initialized.");
+
             List<Chip> availableChips = new List<Chip>();
 
             foreach (Chip chip in GetPlayerChips(playerId))
@@ -66,6 +70,17 @@ namespace Reversi.Services
             }
 
             return availableChips;
+        }
+
+        public bool CheckInitBoard()
+        {
+            if (Board == null)
+                return false;
+
+            if (Board.Chips == null)
+                return false;
+
+            return true;
         }
 
         /// <summary>

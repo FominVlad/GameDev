@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Reversi.Models
@@ -17,6 +18,9 @@ namespace Reversi.Models
 
         public Board(int size)
         {
+            if (size % 2 != 0)
+                throw new Exception("Size must be divisible by 2 without remainder.");
+
             this.Size = size;
             FillEmptyChipList();
         }

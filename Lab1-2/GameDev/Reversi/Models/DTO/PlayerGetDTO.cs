@@ -14,7 +14,7 @@ namespace Reversi.Models.DTO
 
         public PlayerColour PlayerColour { get; set; }
 
-        public PlayerGetDTO(Player player)
+        public PlayerGetDTO(IPlayer player)
         {
             this.Id = player.Id;
             this.Name = player.Name;

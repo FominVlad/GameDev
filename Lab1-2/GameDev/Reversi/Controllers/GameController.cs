@@ -82,7 +82,8 @@ namespace Reversi.Controllers
                 return StatusCode(200, new
                 {
                     changedChips = PlayerService.DoStep(playerId, chipDoStepDTO),
-                    nextStepPlayerId = PlayerService.NextStepPlayerId
+                    nextStepPlayerId = PlayerService.NextStepPlayerId,
+                    winnerIds = BoardService.Board.WinnerPlayerIdList
                 });
             }
             catch (Exception ex)

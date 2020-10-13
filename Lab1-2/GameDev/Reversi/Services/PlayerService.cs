@@ -12,8 +12,7 @@ namespace Reversi.Services
     public class PlayerService
     {
         private BoardService BoardService { get; set; }
-        public List<Player> Players { get; private set; }
-
+        public List<IPlayer> Players { get; private set; }
         public int? NextStepPlayerId { get; private set; }
 
         public PlayerService(BoardService boardService)
@@ -31,8 +30,21 @@ namespace Reversi.Services
             if (players.Count != 2)
                 throw new Exception("Players count must be 2.");
 
-            Players = players.Select((playerDTO, index) => 
-                new Player(playerDTO, index, BoardService, this)).ToList();
+            Players = new List<IPlayer>();
+            int nextId = 1;
+
+            foreach (PlayerCreateDTO playerDTO in players)
+            {
+                if (playerDTO.PlayerType == PlayerType.Human)
+                {
+                    Players.Add(new PlayerHuman(playerDTO, nextId));
+                }
+                else if (playerDTO.PlayerType == PlayerType.PC)
+                {
+                    Players.Add(new PlayerPC(playerDTO, nextId));
+                }
+                nextId++;
+            }
 
             NextStepPlayerId = Players.Where(player => 
                 player.PlayerColour == PlayerColour.Black).
@@ -57,14 +69,27 @@ namespace Reversi.Services
             if (!CheckNextStepPlayerId(playerId))
                 throw new Exception("This player is not in the step queue.");
 
-            Chip chipForStep = new Chip(chipDoStepDTO, playerId);
+            IPlayer player = Players.Where(player => player.Id == playerId)
+                .FirstOrDefault();
 
-            List <Chip> changedChips = Players.Where(player => player.Id == playerId)
-                .FirstOrDefault().PlayerManager.DoStep(playerId, chipForStep);
+            List<Chip> availableChips = BoardService.GetAvailableSteps(player.Id);
+            List<Chip> flippedChips = new List<Chip>();
 
+            if (availableChips.Count == 0)
+                return flippedChips;
+
+            Chip chipForStep = player.PlayerType == PlayerType.Human ? 
+                new Chip(chipDoStepDTO, player.Id) : 
+                availableChips[new Random().Next(0, availableChips.Count)];
+
+            if (player.PlayerType == PlayerType.Human &&
+                !availableChips.Contains(chipForStep))
+                throw new Exception("This step is unavailable!");
+
+            flippedChips = BoardService.FlipChips(chipForStep, player.Id);
             SetNextStepPlayerId(playerId);
 
-            return changedChips;
+            return flippedChips;
         }
 
         private void SetNextStepPlayerId(int currStepPlayerId)
@@ -77,10 +102,23 @@ namespace Reversi.Services
                 tmpNextStepPlayerId = currStepPlayerId;
 
                 if (BoardService.GetAvailableSteps(currStepPlayerId).Count == 0)
+                {
                     tmpNextStepPlayerId = null;
+                    SetWinner();
+                }
             }
 
             NextStepPlayerId = tmpNextStepPlayerId;
+        }
+
+        private void SetWinner()
+        {
+            var chipsCount = BoardService.Board.OccupiedChips.GroupBy(chip => chip.OwnerId)
+                .Select(grChips => new { playerId = grChips.Key, chipsCount = grChips.Count() });
+
+            BoardService.Board.WinnerPlayerIdList = chipsCount
+                .Where(obj => obj.chipsCount == chipsCount.Max(chipsCount => chipsCount.chipsCount))
+                .Select(obj => obj.playerId).ToList();
         }
 
         public bool CheckNextStepPlayerId(int currStepPlayerId)

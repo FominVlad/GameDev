@@ -8,6 +8,7 @@ namespace Reversi.Models
     {
         public int Size { get; private set; }
         public List<List<Chip>> Chips { get; private set; }
+        public List<int> WinnerPlayerIdList { get; set; }
         public List<Chip> OccupiedChips {
             get
             {
@@ -22,6 +23,7 @@ namespace Reversi.Models
                 throw new Exception("Size must be divisible by 2 without remainder.");
 
             this.Size = size;
+            WinnerPlayerIdList = new List<int>();
             FillEmptyChipList();
         }
 
@@ -40,7 +42,7 @@ namespace Reversi.Models
             }
         }
 
-        public void FillBoardInitialValues(List<Player> players)
+        public void FillBoardInitialValues(List<IPlayer> players)
         {
             int boardMid = Size / 2;
 

@@ -15,7 +15,7 @@ namespace Reversi.Services
         /// <param name="boardSize">Board size</param>
         /// <param name="players">Players list</param>
         /// <returns>Initialized board.</returns>
-        public List<Chip> InitBoard(int boardSize, List<Player> players)
+        public List<Chip> InitBoard(int boardSize, List<IPlayer> players)
         {
             Board = new Board(boardSize);
             Board.FillBoardInitialValues(players);
@@ -37,16 +37,19 @@ namespace Reversi.Services
         /// </summary>
         /// <param name="chips">Chips to flip.</param>
         /// <param name="players">Players list.</param>
-        public void FlipChips(List<Chip> chips, List<Player> players)
+        public List<Chip> FlipChips(Chip chip, int newOwnerId)//List<IPlayer> players)
         {
-            int newOwnerId = players
-                .Where(player => player.Id != chips.FirstOrDefault().OwnerId)
-                .Select(player => player.Id).FirstOrDefault();
+            List<Chip> flippedChips = GetFlippedChips(chip);
+            AddChipToBoard(chip);
 
-            foreach (Chip chip in chips)
+            foreach (Chip flippedChip in flippedChips)
             {
-                Board.Chips[chip.PosY][chip.PosX].OwnerId = newOwnerId;
+                Board.Chips[flippedChip.PosY][flippedChip.PosX].OwnerId = newOwnerId;
             }
+
+            flippedChips.Add(chip);
+
+            return flippedChips;
         }
 
         /// <summary>

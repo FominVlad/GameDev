@@ -1,13 +1,12 @@
 ﻿using Reversi.Models;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace AntiReversi.Client
 {
     class ColorParser
     {
-        private Dictionary<string, PlayerColour> StringsToPlayerColours { get; set; }
+        public Dictionary<string, PlayerColour> StringsToPlayerColours { get; private set; }
 
         public ColorParser()
         {

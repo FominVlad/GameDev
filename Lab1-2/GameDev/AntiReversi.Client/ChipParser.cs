@@ -1,4 +1,5 @@
-﻿using Reversi.Models.DTO;
+﻿using Reversi.Models;
+using Reversi.Models.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ namespace AntiReversi.Client
 {
     class ChipParser
     {
-        private Dictionary<string, int> LettersToNumbers { get; set; }
+        public Dictionary<string, int> LettersToNumbers { get; private set; }
 
         public ChipParser()
         {
@@ -41,11 +42,6 @@ namespace AntiReversi.Client
             if (!LettersToNumbers.TryGetValue(inputedPosX, out int posX))
                 throw new Exception("Letter is not available.");
 
-            //if (!LettersToNumbers.ContainsKey(inputedPosX))
-            //    throw new Exception("Letter is not available.");
-
-            //int posX = LettersToNumbers[inputedPosX];
-
             if (Int32.TryParse(inputStr[1].ToString(), out int inputedPosY))
                 inputedPosY--;
             else
@@ -57,7 +53,7 @@ namespace AntiReversi.Client
             return new ChipDoStepDTO() { PosX = posX, PosY = posY };
         }
 
-        public string ParseChipToString(ChipDoStepDTO chip, int boardSize = 8)
+        public string ParseChipToString(Chip chip, int boardSize = 8)
         {
             if (chip == null)
                 throw new Exception("Chip can`t be null.");

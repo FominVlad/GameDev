@@ -59,7 +59,7 @@ namespace Reversi.Services
         /// <param name="playerId">Player that do step.</param>
         /// <param name="chipDoStepDTO">The chip that done step.</param>
         /// <returns>Changed chips list.</returns>
-        public List<Chip> DoStep(int playerId, ChipDoStepDTO chipDoStepDTO)
+        public Chip DoStep(int playerId, ChipDoStepDTO chipDoStepDTO)
         {
             if (!BoardService.CheckInitBoard())
                 throw new Exception("Board is not initialized.");
@@ -73,10 +73,10 @@ namespace Reversi.Services
                 .FirstOrDefault();
 
             List<Chip> availableChips = BoardService.GetAvailableSteps(player.Id);
-            List<Chip> flippedChips = new List<Chip>();
+            //List<Chip> flippedChips = new List<Chip>();
 
-            if (availableChips.Count == 0)
-                return flippedChips;
+            //if (availableChips.Count == 0)
+               // return flippedChips;
 
             Chip chipForStep = player.PlayerType == PlayerType.Human ? 
                 new Chip(chipDoStepDTO, player.Id) : 
@@ -86,10 +86,10 @@ namespace Reversi.Services
                 !availableChips.Contains(chipForStep))
                 throw new Exception("This step is unavailable!");
 
-            flippedChips = BoardService.FlipChips(chipForStep, player.Id);
+            BoardService.FlipChips(chipForStep, player.Id);
             SetNextStepPlayerId(playerId);
 
-            return flippedChips;
+            return chipForStep;
         }
 
         private void SetNextStepPlayerId(int currStepPlayerId)

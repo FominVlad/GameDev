@@ -45,11 +45,17 @@ namespace Reversi.Models
         public void FillBoardInitialValues(List<IPlayer> players)
         {
             int boardMid = Size / 2;
+            int blackPlayerId = players.Where(player => player.PlayerColour == PlayerColour.Black)
+                .Select(player => player.Id)
+                .FirstOrDefault();
+            int whitePlayerId = players.Where(player => player.PlayerColour == PlayerColour.White)
+                .Select(player => player.Id)
+                .FirstOrDefault();
 
-            Chips[boardMid - 1][boardMid - 1] = new Chip(players.FirstOrDefault().Id, boardMid - 1, boardMid - 1);
-            Chips[boardMid][boardMid - 1] = new Chip(players.LastOrDefault().Id, boardMid - 1, boardMid);
-            Chips[boardMid - 1][boardMid] = new Chip(players.LastOrDefault().Id, boardMid, boardMid - 1);
-            Chips[boardMid][boardMid] = new Chip(players.FirstOrDefault().Id, boardMid, boardMid);
+            Chips[boardMid - 1][boardMid - 1] = new Chip(whitePlayerId, boardMid - 1, boardMid - 1);
+            Chips[boardMid][boardMid - 1] = new Chip(blackPlayerId, boardMid - 1, boardMid);
+            Chips[boardMid - 1][boardMid] = new Chip(blackPlayerId, boardMid, boardMid - 1);
+            Chips[boardMid][boardMid] = new Chip(whitePlayerId, boardMid, boardMid);
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace AntiReversi.Client
 {
-    class ChipParser
+    public class ChipParser
     {
         public Dictionary<string, int> LettersToNumbers { get; private set; }
 

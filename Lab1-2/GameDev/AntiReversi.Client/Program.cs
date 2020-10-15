@@ -2,8 +2,6 @@
 using Reversi.Models.DTO;
 using Reversi.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace AntiReversi.Client
 {
@@ -23,13 +21,6 @@ namespace AntiReversi.Client
             {
                 InitClient();
 
-                string blackHole = Console.ReadLine();
-                ChipDoStepDTO chipBlackHole = chipParser.ParseStringToChip(blackHole);
-
-                string currentPlayerColor = Console.ReadLine();
-                InitPlayers(colorParser.ParseStringToPlayerColor(currentPlayerColor));
-                InitBoard(chipBlackHole);
-
                 while (boardService.Board.WinnerPlayerIdList.Count == 0)
                 {
                     LastPlayerId = playerService.NextStepPlayerId;
@@ -37,14 +28,13 @@ namespace AntiReversi.Client
                     {
                         Chip movedChip = playerService.DoStep(CurrentPlayerId, null);
 
-                        if (movedChip != null)
-                            Console.WriteLine(chipParser.ParseChipToString(movedChip));
+                        Console.WriteLine(chipParser.ParseChipToString(movedChip));
 
                         if (LastPlayerId == playerService.NextStepPlayerId && playerService.NextStepPlayerId != null)
                         {
                             string chipDoStep = Console.ReadLine();
                             if (chipDoStep != "pass")
-                                throw new Exception("Opponent must pass!");
+                                throw new Exception("Command is undefined.");
                         }
                     }
                     else
@@ -55,58 +45,29 @@ namespace AntiReversi.Client
 
                         playerService.DoStep(OpponentPlayerId, chipParser.ParseStringToChip(chipDoStep));
 
-                        if (LastPlayerId == playerService.NextStepPlayerId && playerService.NextStepPlayerId != null)
+                        if (LastPlayerId == playerService.NextStepPlayerId && 
+                            playerService.NextStepPlayerId != null)
                             Console.WriteLine("pass");
                     }
                 }
             }
-            catch
-            {
-            }
+            catch { }
         }
 
         private static void InitClient()
         {
-            chipParser = new ChipParser();
+            Initializer initializer = new Initializer();
             colorParser = new ColorParser();
-            boardService = new BoardService();
-            playerService = new PlayerService(boardService);
-        }
+            chipParser = new ChipParser();
 
-        private static void InitPlayers(PlayerColour currentPlayerColor)
-        {
-            PlayerColour opponentPlayerColor = colorParser.StringsToPlayerColours
-                .Where(obj => obj.Value != currentPlayerColor)
-                .Select(obj => obj.Value).FirstOrDefault();
+            string blackHole = Console.ReadLine();
+            ChipDoStepDTO chipBlackHole = chipParser.ParseStringToChip(blackHole);
 
-            List<PlayerCreateDTO> playerCreates = new List<PlayerCreateDTO>()
-            {
-                new PlayerCreateDTO()
-                {
-                    Name = "Current Player",
-                    PlayerColour = currentPlayerColor,
-                    PlayerType = PlayerType.PC
-                },
-                new PlayerCreateDTO()
-                {
-                    Name = "Opponent Player",
-                    PlayerColour = opponentPlayerColor,
-                    PlayerType = PlayerType.Human
-                }
-            };
-
-            playerService.InitPlayers(playerCreates);
-            CurrentPlayerId = playerService.Players
-                .Where(player => player.PlayerType == PlayerType.PC)
-                .Select(player => player.Id).FirstOrDefault();
-            OpponentPlayerId = playerService.Players
-                .Where(player => player.PlayerType == PlayerType.Human)
-                .Select(player => player.Id).FirstOrDefault();
-        }
-
-        private static void InitBoard(ChipDoStepDTO chipBlackHole)
-        {
-            boardService.InitBoard(8, playerService.Players, chipBlackHole);
+            string currentPlayerColor = Console.ReadLine();
+            boardService = initializer.InitBoardService();
+            playerService = initializer.InitPlayers(colorParser.ParseStringToPlayerColor(currentPlayerColor),
+                boardService, out CurrentPlayerId, out OpponentPlayerId);
+            initializer.InitBoard(chipBlackHole, playerService, boardService);
         }
     }
 }

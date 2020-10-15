@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace AntiReversi.Client
 {
-    class ColorParser
+    public class ColorParser
     {
         public Dictionary<string, PlayerColour> StringsToPlayerColours { get; private set; }
 

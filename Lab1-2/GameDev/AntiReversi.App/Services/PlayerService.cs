@@ -73,10 +73,9 @@ namespace Reversi.Services
                 .FirstOrDefault();
 
             List<Chip> availableChips = BoardService.GetAvailableSteps(player.Id);
-            //List<Chip> flippedChips = new List<Chip>();
 
-            //if (availableChips.Count == 0)
-               // return flippedChips;
+            if (availableChips.Count == 0)
+                return null;
 
             Chip chipForStep = player.PlayerType == PlayerType.Human ? 
                 new Chip(chipDoStepDTO, player.Id) : 
@@ -117,7 +116,7 @@ namespace Reversi.Services
                 .Select(grChips => new { playerId = grChips.Key, chipsCount = grChips.Count() });
 
             BoardService.Board.WinnerPlayerIdList = chipsCount
-                .Where(obj => obj.chipsCount == chipsCount.Max(chipsCount => chipsCount.chipsCount))
+                .Where(obj => obj.chipsCount == chipsCount.Min(chipsCount => chipsCount.chipsCount))
                 .Select(obj => obj.playerId).ToList();
         }
 

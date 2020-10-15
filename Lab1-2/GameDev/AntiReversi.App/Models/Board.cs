@@ -9,6 +9,7 @@ namespace Reversi.Models
         public int Size { get; private set; }
         public List<List<Chip>> Chips { get; private set; }
         public List<int> WinnerPlayerIdList { get; set; }
+        public Chip BlackHole { get; private set; }
         public List<Chip> OccupiedChips {
             get
             {
@@ -17,13 +18,14 @@ namespace Reversi.Models
             }
         }
 
-        public Board(int size)
+        public Board(int size, Chip blackHole)
         {
             if (size % 2 != 0)
                 throw new Exception("Size must be divisible by 2 without remainder.");
 
             this.Size = size;
-            WinnerPlayerIdList = new List<int>();
+            this.BlackHole = blackHole;
+            this.WinnerPlayerIdList = new List<int>();
             FillEmptyChipList();
         }
 

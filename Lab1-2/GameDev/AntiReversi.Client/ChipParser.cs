@@ -35,7 +35,7 @@ namespace AntiReversi.Client
             if (inputStr == null)
                 throw new Exception("Inputed string can`t be null.");
             if (inputStr.Length != 2)
-                throw new Exception("Inputed string length can`t be not equal 2.");
+                throw new Exception($"Inputed string length can`t be not equal 2. String: {inputStr}");
             
             string inputedPosX = inputStr[0].ToString().ToUpper();
 

@@ -1,4 +1,5 @@
 ﻿using Reversi.Models;
+using Reversi.Models.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +16,9 @@ namespace Reversi.Services
         /// <param name="boardSize">Board size</param>
         /// <param name="players">Players list</param>
         /// <returns>Initialized board.</returns>
-        public List<Chip> InitBoard(int boardSize, List<IPlayer> players)
+        public List<Chip> InitBoard(int boardSize, List<IPlayer> players, ChipDoStepDTO blackHole)
         {
-            Board = new Board(boardSize);
+            Board = new Board(boardSize, new Chip(blackHole, -1));
             Board.FillBoardInitialValues(players);
 
             return Board.OccupiedChips;
@@ -162,7 +163,10 @@ namespace Reversi.Services
                     }
 
                     if ((tmpChip == null && !hasOpponentChip) ||
-                        (tmpChip != null && hasOpponentChip && tmpChip.OwnerId == chip.OwnerId))
+                        (tmpChip != null && hasOpponentChip && tmpChip.OwnerId == chip.OwnerId) 
+                        //||
+                        //(tmpChipX == Board.BlackHole.PosX && tmpChipY == Board.BlackHole.PosY)
+                        )
                         break;
 
                     if (tmpChip == null && hasOpponentChip)
@@ -172,6 +176,8 @@ namespace Reversi.Services
                     }
                 }
             }
+
+            availableChips.RemoveAll(chip => chip.PosX == Board.BlackHole.PosX && chip.PosY == Board.BlackHole.PosY);
 
             return availableChips.Distinct().ToList();
         }

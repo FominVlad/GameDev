@@ -15,31 +15,53 @@ namespace AntiReversi.Client
         private static PlayerService playerService;
         private static int CurrentPlayerId;
         private static int OpponentPlayerId;
+        private static int? LastPlayerId;
 
         static void Main(string[] args)
         {
-            InitClient();
-
-            //string blackHole = Console.ReadLine();
-
-            string currentPlayerColor = Console.ReadLine();
-            InitPlayers(colorParser.ParseStringToPlayerColor(currentPlayerColor));
-            InitBoard();
-
-            while(boardService.Board.WinnerPlayerIdList.Count == 0)
+            try
             {
-                if (playerService.NextStepPlayerId == CurrentPlayerId)
-                {
-                    Chip movedChip = playerService.DoStep(CurrentPlayerId, null);
+                InitClient();
 
-                    Console.WriteLine(chipParser.ParseChipToString(movedChip));
-                }
-                else
-                {
-                    string chipDoStep = Console.ReadLine();
+                string blackHole = Console.ReadLine();
+                ChipDoStepDTO chipBlackHole = chipParser.ParseStringToChip(blackHole);
 
-                    playerService.DoStep(OpponentPlayerId, chipParser.ParseStringToChip(chipDoStep));
+                string currentPlayerColor = Console.ReadLine();
+                InitPlayers(colorParser.ParseStringToPlayerColor(currentPlayerColor));
+                InitBoard(chipBlackHole);
+
+                while (boardService.Board.WinnerPlayerIdList.Count == 0)
+                {
+                    LastPlayerId = playerService.NextStepPlayerId;
+                    if (playerService.NextStepPlayerId == CurrentPlayerId)
+                    {
+                        Chip movedChip = playerService.DoStep(CurrentPlayerId, null);
+
+                        if (movedChip != null)
+                            Console.WriteLine(chipParser.ParseChipToString(movedChip));
+
+                        if (LastPlayerId == playerService.NextStepPlayerId && playerService.NextStepPlayerId != null)
+                        {
+                            string chipDoStep = Console.ReadLine();
+                            if (chipDoStep != "pass")
+                                throw new Exception("Opponent must pass!");
+                        }
+                    }
+                    else
+                    {
+                        string chipDoStep = Console.ReadLine();
+                        if (chipDoStep == "pass")
+                            break;
+
+                        playerService.DoStep(OpponentPlayerId, chipParser.ParseStringToChip(chipDoStep));
+
+                        if (LastPlayerId == playerService.NextStepPlayerId && playerService.NextStepPlayerId != null)
+                            Console.WriteLine("pass");
+                    }
                 }
+            }
+            catch
+            {
             }
         }
 
@@ -82,9 +104,9 @@ namespace AntiReversi.Client
                 .Select(player => player.Id).FirstOrDefault();
         }
 
-        private static void InitBoard()
+        private static void InitBoard(ChipDoStepDTO chipBlackHole)
         {
-            boardService.InitBoard(8, playerService.Players);
+            boardService.InitBoard(8, playerService.Players, chipBlackHole);
         }
     }
 }

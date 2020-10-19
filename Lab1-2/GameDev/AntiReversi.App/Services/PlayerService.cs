@@ -79,7 +79,7 @@ namespace Reversi.Services
 
             Chip chipForStep = player.PlayerType == PlayerType.Human ?
                 new Chip(chipDoStepDTO, player.Id) :
-                BotService.getNextMove(availableChips);
+                BotService.GetNextMove(availableChips);
             //    availableChips[new Random().Next(0, availableChips.Count)];
 
             if (player.PlayerType == PlayerType.Human &&

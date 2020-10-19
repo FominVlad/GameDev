@@ -59,5 +59,10 @@ namespace Reversi.Models
             Chips[boardMid - 1][boardMid] = new Chip(blackPlayerId, boardMid, boardMid - 1);
             Chips[boardMid][boardMid] = new Chip(whitePlayerId, boardMid, boardMid);
         }
+
+        public Board(int size, Chip blackHole, List<List<Chip>> chips) : this(size, blackHole)
+        {
+            Chips = chips;
+        }
     }
 }

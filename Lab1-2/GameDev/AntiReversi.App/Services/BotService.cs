@@ -17,7 +17,9 @@ namespace Reversi.Services
 
         public static Chip GetNextMove(Board board, List<Chip> availableChips)
         {
-            var scores = availableChips.Select(chip => new { chip, score = Evaluate(board, chip) }).OrderBy(e => 100 - e.score).ToList();
+            var scores = availableChips.Select(chip => 
+                new { chip, score = Evaluate(board, chip) })
+                .OrderBy(e => 100 - e.score).ToList();
             var maxScores = scores.Where(e => e.score == scores[0].score).ToList();
 
             Random random = new Random();
@@ -31,9 +33,13 @@ namespace Reversi.Services
             int cPmob = 1;
             int cStab = 1;
 
-            Board nextBoard = StaticBoardService.FlipChips(board, chip);
+            BoardService boardService = new BoardService();
+            boardService.InitBoard(board);
 
-            return cPos * Position(chip) + cMob * Mobility(nextBoard) + cPmob * PotentialMobility(nextBoard) + cStab * Stability(nextBoard);
+            Board nextBoard = boardService.FlipChips(chip);
+
+            return cPos * Position(chip) + cMob * Mobility(nextBoard) + cPmob * 
+                PotentialMobility(nextBoard) + cStab * Stability(nextBoard);
         }
 
         static int Position(Chip chip) {

@@ -25,6 +25,18 @@ namespace Reversi.Services
         }
 
         /// <summary>
+        /// Method for initialize board.
+        /// </summary>
+        /// <param name="boardSize">Board size</param>
+        /// <param name="players">Players list</param>
+        /// <returns>Initialized board.</returns>
+        public List<Chip> InitBoard(Board board)
+        {
+            this.Board = board;
+            return Board.OccupiedChips;
+        }
+
+        /// <summary>
         /// Add chip to board.
         /// </summary>
         /// <param name="chip">Chip to add.</param>
@@ -51,6 +63,24 @@ namespace Reversi.Services
             flippedChips.Add(chip);
 
             return flippedChips;
+        }
+
+        /// <summary>
+        /// Method for flipping chips.
+        /// </summary>
+        /// <param name="chips">Chips to flip.</param>
+        /// <param name="players">Players list.</param>
+        public Board FlipChips(Chip chip)//List<IPlayer> players)
+        {
+            List<Chip> flippedChips = GetFlippedChips(chip);
+            flippedChips.Add(chip);
+
+            Board newBoard = new Board(Board.Size, Board.BlackHole, Board.Chips.Select(row => 
+                row.Select(c => c == null ? c : flippedChips.Exists(flippedChip => 
+                    c.PosX == flippedChip.PosX && c.PosY == flippedChip.PosY) ? 
+                    new Chip(chip.OwnerId, c.PosX, c.PosY) : c).ToList()).ToList());
+
+            return newBoard;
         }
 
         /// <summary>

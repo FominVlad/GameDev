@@ -51,7 +51,7 @@ namespace AntiReversi.Client
                     }
                 }
             }
-            catch { }
+            catch (Exception ex) { }
         }
 
         private static void InitClient()

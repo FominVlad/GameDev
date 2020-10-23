@@ -1,4 +1,5 @@
-﻿using Reversi.Models;
+﻿using AntiReversi.App.Tree;
+using Reversi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,8 +16,10 @@ namespace Reversi.Services
             {   6,   3,   4, 0 }
         };
 
-        public static Chip GetNextMove(Board board, List<Chip> availableChips)
+        public static Chip GetNextMove(Board board, List<Chip> availableChips, PlayerService playerService)
         {
+            ChipTree tree = new ChipTree(board, availableChips, playerService, 4);
+
             var scores = availableChips.Select(chip => 
                 new { chip, score = Evaluate(board, chip) })
                 .OrderBy(e => 100 - e.score).ToList();

@@ -8,6 +8,8 @@ namespace Reversi.Models
         public int PosX { get; set; }
         public int PosY { get; set; }
 
+        public Chip() { }
+
         public Chip(ChipDoStepDTO chipDoStepDTO, int playerId) 
         {
             this.OwnerId = playerId;
@@ -21,6 +23,12 @@ namespace Reversi.Models
             this.PosX = posX;
             this.PosY = posY;
         }
+        public Chip(Chip chip)
+        {
+            this.OwnerId = chip.OwnerId;
+            this.PosX = chip.PosX;
+            this.PosY = chip.PosY;
+        }
 
         public override bool Equals(object obj)
         {
@@ -33,6 +41,15 @@ namespace Reversi.Models
                 return false;
 
             return true;
+        }
+
+        public static explicit operator ChipDoStepDTO(Chip chip)
+        {
+            return new ChipDoStepDTO()
+            {
+                PosX = chip.PosX,
+                PosY = chip.PosY
+            };
         }
     }
 }

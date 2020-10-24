@@ -84,7 +84,7 @@ namespace Reversi.Models
 
                 for (int j = 0; j < board.Chips[i].Count; j++)
                 {
-                    Chips[i].Add(board.Chips[i][j] == null ? null : board.Chips[i][j]);
+                    Chips[i].Add(board.Chips[i][j] == null ? null : new Chip(board.Chips[i][j]));
                 }
             }
         }

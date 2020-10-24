@@ -16,7 +16,7 @@ namespace AntiReversi.App.Tree
 
         public ChipTree(Board rootBoard, List<Chip> nextChips, PlayerService playerService, int deep)
         {
-            this.RootChip = new ChipNode(new Board(rootBoard), new Chip() { OwnerId = nextChips.FirstOrDefault().OwnerId });
+            this.RootChip = new ChipNode(new Board(rootBoard), new Chip() { OwnerId = nextChips.FirstOrDefault().OwnerId }, 0);
             this.Deep = deep;
             this.PlayerService = playerService;
 
@@ -32,33 +32,33 @@ namespace AntiReversi.App.Tree
 
             BoardService boardService = new BoardService();
             boardService.InitBoard(new Board(chipNode.Board));
-            boardService.FlipChips(chipNode.Chip, chipNode.Chip.OwnerId);
-
+            boardService.FlipChips(new Chip(chipNode.Chip), chipNode.Chip.OwnerId);
             List<Chip> availableChips = boardService.GetAvailableSteps(PlayerService.Players.Where(player => player.Id != chipNode.Chip.OwnerId).Select(player => player.Id).FirstOrDefault());
 
             foreach (Chip chip in availableChips)
             {
-                ChipNode nextChipNode = new ChipNode(new Board(boardService.Board), chip);
+                ChipNode nextChipNode = new ChipNode(new Board(boardService.Board), new Chip(chip), level);
                 chipNode.NextChips.Add(nextChipNode);
-            }
-
-            foreach (ChipNode chip in chipNode.NextChips)
-            {
-                FillTree(chip, level + 1);
+                FillTree(nextChipNode, level + 1);
+                nextChipNode.SetCoefficient();
             }
         }
 
         private void FillChipNextList(ChipNode chipNode)
         {
-            foreach (ChipNode chip in RootChip.NextChips)
-                FillTree(chip, 1);
+            foreach (ChipNode chip in chipNode.NextChips)
+            {
+                FillTree(chip, 2);
+                chip.SetCoefficient();
+            }
+            chipNode.SetCoefficient();
         }
 
         private void FillChipNextList(ChipNode chipNode, List<Chip> nextChips)
         {
             foreach (Chip chip in nextChips)
             {
-                chipNode.NextChips.Add(new ChipNode(new Board(chipNode.Board), chip));
+                chipNode.NextChips.Add(new ChipNode(new Board(chipNode.Board), chip, 1));
             }
         }
     }

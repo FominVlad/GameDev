@@ -20,16 +20,18 @@ namespace Reversi.Services
         {
             ChipTree tree = new ChipTree(board, availableChips, playerService, 4);
 
-            var scores = availableChips.Select(chip => 
+            return tree.RootChip.MostProfitableChip;
+
+            /*var scores = availableChips.Select(chip => 
                 new { chip, score = Evaluate(board, chip) })
                 .OrderBy(e => 100 - e.score).ToList();
             var maxScores = scores.Where(e => e.score == scores[0].score).ToList();
-
+            
             Random random = new Random();
-            return maxScores[random.Next(maxScores.Count)].chip;
+            return maxScores[random.Next(maxScores.Count)].chip;*/
         }
 
-        static int Evaluate(Board board, Chip chip)
+        public static int Evaluate(Board board, Chip chip)
         {
             int cPos = 1;
             int cMob = 1;
@@ -37,7 +39,7 @@ namespace Reversi.Services
             int cStab = 1;
 
             BoardService boardService = new BoardService();
-            boardService.InitBoard(board);
+            boardService.InitBoard(new Board(board));
 
             Board nextBoard = boardService.FlipChips(chip);
 

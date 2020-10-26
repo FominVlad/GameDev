@@ -212,6 +212,106 @@ namespace Reversi.Services
             return availableChips.Distinct().ToList();
         }
 
+        public List<Chip> GetFrontierChips(int playerId)
+        {
+            List<Chip> frontierChips = new List<Chip>();
+
+            foreach (Chip chip in GetPlayerChips(playerId))
+            {
+                foreach ((int x, int y) in GetDirectionVectors())
+                {
+                    if (IsInBoardIndex(chip.PosY + y) && IsInBoardIndex(chip.PosX + x) && Board.Chips[chip.PosY + y][chip.PosX + x] == null)
+                    {
+                        frontierChips.Add(chip);
+                        break;
+                    }
+                }
+            }
+
+            return frontierChips;
+        }
+
+        public List<Chip> GetStableChips(int playerId)
+        {
+            List<Chip> playerChips = GetPlayerChips(playerId).ToList();
+            List<Chip> stableChips = new List<Chip>();
+
+            List<List<bool>> stableMap = new List<List<bool>>();
+
+            for (int i = 0; i < 8; i++)
+            {
+                stableMap.Add(new List<bool>());
+
+                for (int j = 0; j < 8; j++)
+                {
+                    stableMap[i].Add(false);
+                }
+            }
+
+            bool changed = true;
+
+            while (changed)
+            {
+                changed = false;
+
+                foreach (Chip chip in playerChips)
+                {
+                    bool result = true;
+
+                    List<bool> directions = GetDirectionVectors().Select(((int x, int y) e) => {
+                        int tmpX = chip.PosX + e.x;
+                        int tmpY = chip.PosY + e.y;
+
+                        if (IsInBoardIndex(tmpX) && IsInBoardIndex(tmpY)) return stableMap[tmpY][tmpX];
+                        else return true;
+                    }).ToList();
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        result = result && (directions[i] || directions[4 + i]);
+                    }
+
+                    if (result && !stableMap[chip.PosY][chip.PosX])
+                    {
+                        changed = true;
+                        stableChips.Add(chip);
+                        stableMap[chip.PosY][chip.PosX] = true;
+                    }
+                }
+            }
+
+
+            //foreach (Chip chip in GetPlayerChips(playerId))
+            //{
+            //    bool isStable = true;
+            //    List<(int, int)> directionsWithEmptyCells = new List<(int, int)>();
+
+            //    foreach ((int x, int y) in GetDirectionVectors())
+            //    {
+            //        if (!isStable) break;
+
+            //        for (int tmpX = chip.PosX + x, tmpY = chip.PosY + y; IsInBoardIndex(tmpX) && IsInBoardIndex(tmpY); tmpX += x, tmpY += y)
+            //        {
+            //            if (Board.Chips[tmpY][tmpX] == null)
+            //            {
+            //                directionsWithEmptyCells.Add((x, y));
+                            
+            //                if (directionsWithEmptyCells.Any(((int, int) tuple) => tuple.Item1 == -x && tuple.Item2 == -y))
+            //                {
+            //                    isStable = false;
+            //                }
+
+            //                break;
+            //            }
+            //        }
+            //    }
+
+            //    if (isStable) stableChips.Add(chip);
+            //}
+
+            return stableChips;
+        }
+
         private bool IsInBoardIndex(int index)
         {
             return index < Board.Size && index >= 0;

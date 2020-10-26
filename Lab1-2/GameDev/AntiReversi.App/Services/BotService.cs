@@ -38,13 +38,13 @@ namespace Reversi.Services
             int cPmob = 1;
             int cStab = 1;
 
+            int id = chip.OwnerId;
+            
             BoardService boardService = new BoardService();
             boardService.InitBoard(new Board(board));
 
-            Board nextBoard = boardService.FlipChips(chip);
-
-            return cPos * Position(chip) + cMob * Mobility(nextBoard) + cPmob * 
-                PotentialMobility(nextBoard) + cStab * Stability(nextBoard);
+            return cPos * Position(chip) + cMob * Mobility(boardService, id) + cPmob * 
+                PotentialMobility(boardService, id) + cStab * Stability(boardService, id);
         }
 
         static int Position(Chip chip) {
@@ -55,19 +55,19 @@ namespace Reversi.Services
             return scoreTable[x, y];
         }
 
-        static int Mobility(Board board)
+        static int Mobility(BoardService boardService, int id)
         {
-            return 0;
+            return boardService.GetAvailableSteps(id).Distinct().Count();
         }
 
-        static int PotentialMobility(Board board)
+        static int PotentialMobility(BoardService boardService, int id)
         {
-            return 0;
+            return -(boardService.GetFrontierChips(id).Count());
         }
 
-        static int Stability(Board board)
+        static int Stability(BoardService boardService, int id)
         {
-            return 0;
+            return -(boardService.GetStableChips(id).Count());
         }
     }
 }

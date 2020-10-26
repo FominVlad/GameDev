@@ -43,6 +43,11 @@ namespace Reversi.Models
             return true;
         }
 
+        public override int GetHashCode()
+        {
+            return 100 * PosX + 10 * PosY + OwnerId;
+        }
+
         public static explicit operator ChipDoStepDTO(Chip chip)
         {
             return new ChipDoStepDTO()

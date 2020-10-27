@@ -41,7 +41,6 @@ namespace Reversi.Services
         static int Position(Chip chip) {
             int x = chip.PosX > 3 ? 7 - chip.PosX : chip.PosX;
             int y = chip.PosY > 3 ? 7 - chip.PosY : chip.PosY;
-            int score = ((x % 2) + (y % 2)) * (10 - x - y);
 
             return scoreTable[x, y];
         }

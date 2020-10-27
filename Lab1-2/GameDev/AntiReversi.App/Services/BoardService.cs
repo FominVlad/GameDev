@@ -25,6 +25,18 @@ namespace Reversi.Services
         }
 
         /// <summary>
+        /// Method for initialize board.
+        /// </summary>
+        /// <param name="boardSize">Board size</param>
+        /// <param name="players">Players list</param>
+        /// <returns>Initialized board.</returns>
+        public List<Chip> InitBoard(Board board)
+        {
+            this.Board = board;
+            return Board.OccupiedChips;
+        }
+
+        /// <summary>
         /// Add chip to board.
         /// </summary>
         /// <param name="chip">Chip to add.</param>
@@ -51,6 +63,24 @@ namespace Reversi.Services
             flippedChips.Add(chip);
 
             return flippedChips;
+        }
+
+        /// <summary>
+        /// Method for flipping chips.
+        /// </summary>
+        /// <param name="chips">Chips to flip.</param>
+        /// <param name="players">Players list.</param>
+        public Board FlipChips(Chip chip)//List<IPlayer> players)
+        {
+            List<Chip> flippedChips = GetFlippedChips(chip);
+            flippedChips.Add(chip);
+
+            Board newBoard = new Board(Board.Size, Board.BlackHole, Board.Chips.Select(row => 
+                row.Select(c => c == null ? c : flippedChips.Exists(flippedChip => 
+                    c.PosX == flippedChip.PosX && c.PosY == flippedChip.PosY) ? 
+                    new Chip(chip.OwnerId, c.PosX, c.PosY) : c).ToList()).ToList());
+
+            return newBoard;
         }
 
         /// <summary>
@@ -180,6 +210,102 @@ namespace Reversi.Services
             availableChips.RemoveAll(chip => chip.PosX == Board.BlackHole.PosX && chip.PosY == Board.BlackHole.PosY);
 
             return availableChips.Distinct().ToList();
+        }
+
+        /// <summary>
+        /// Method that returns list of frontier chips (chips that are adjacent to an empty cell)
+        /// </summary>
+        /// <param name="playerId"></param>
+        /// <returns></returns>
+        public List<Chip> GetFrontierChips(int playerId)
+        {
+            List<Chip> frontierChips = new List<Chip>();
+
+            foreach (Chip chip in GetPlayerChips(playerId))
+            {
+                // Check each side of a chip
+                foreach ((int x, int y) in GetDirectionVectors())
+                {
+                    // Check if neighbor to the side is null (empty)
+                    if (IsInBoardIndex(chip.PosY + y) && IsInBoardIndex(chip.PosX + x) && Board.Chips[chip.PosY + y][chip.PosX + x] == null)
+                    {
+                        // If neighbor is empty, add chip to list
+                        frontierChips.Add(chip);
+                        // Break direction loop and move to next chip
+                        break;
+                    }
+                }
+            }
+
+            return frontierChips;
+        }
+
+        /// <summary>
+        /// Method that returns list of stable chips (chips that can not be flipped in the future)
+        /// </summary>
+        /// <param name="playerId"></param>
+        /// <returns></returns>
+        public List<Chip> GetStableChips(int playerId)
+        {
+            List<Chip> playerChips = GetPlayerChips(playerId).ToList();
+            List<Chip> stableChips = new List<Chip>();
+
+            // Matrix that indicates whether chips at given positions are stable
+            List<List<bool>> stableMap = new List<List<bool>>();
+
+            for (int i = 0; i < 8; i++)
+            {
+                stableMap.Add(new List<bool>());
+
+                for (int j = 0; j < 8; j++)
+                {
+                    stableMap[i].Add(false);
+                }
+            }
+
+            bool changed = true;
+
+            // Iterate while at least one new chip has become stable during the iteration
+            while (changed)
+            {
+                // Reset variable - no chips have become stable yet
+                changed = false;
+
+                foreach (Chip chip in playerChips)
+                {
+                    bool result = true;
+
+                    // Get stability boolean for each of chip's neighbors
+                    List<bool> directions = GetDirectionVectors().Select(((int x, int y) e) => {
+                        int tmpX = chip.PosX + e.x;
+                        int tmpY = chip.PosY + e.y;
+
+                        if (IsInBoardIndex(tmpX) && IsInBoardIndex(tmpY)) return stableMap[tmpY][tmpX];
+                        else return true;
+                    }).ToList();
+
+                    // Calculate whether there's at least one stable chip in each of 4 axes:
+                    // For each axis, it takes 2 directions belonging to that axis and return logical OR
+                    // which is then passed into logical AND (so if 1 axis is not stable, then result is not stable)
+                    for (int i = 0; i < 4; i++)
+                    {
+                        result = result && (directions[i] || directions[4 + i]);
+                    }
+
+                    // Check if chip is stable and if it is not in stableMap yet
+                    if (result && !stableMap[chip.PosY][chip.PosX])
+                    {
+                        // Set changed to true for next iteration to occur
+                        changed = true;
+                        // Add chip to list
+                        stableChips.Add(chip);
+                        // Add chip to stableMap
+                        stableMap[chip.PosY][chip.PosX] = true;
+                    }
+                }
+            }
+
+            return stableChips;
         }
 
         private bool IsInBoardIndex(int index)

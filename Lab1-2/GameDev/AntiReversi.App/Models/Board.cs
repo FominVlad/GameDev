@@ -59,5 +59,34 @@ namespace Reversi.Models
             Chips[boardMid - 1][boardMid] = new Chip(blackPlayerId, boardMid, boardMid - 1);
             Chips[boardMid][boardMid] = new Chip(whitePlayerId, boardMid, boardMid);
         }
+
+        public Board(int size, Chip blackHole, List<List<Chip>> chips)
+        {
+            Chips = chips;
+            this.Size = size;
+            this.BlackHole = blackHole;
+        }
+
+        public Board(Board board)
+        {
+            this.Size = board.Size;
+            this.BlackHole = new Chip(board.BlackHole);
+            this.WinnerPlayerIdList = new List<int>();
+
+            foreach (int id in board.WinnerPlayerIdList)
+                WinnerPlayerIdList.Add(id);
+
+            this.Chips = new List<List<Chip>>();
+
+            for (int i = 0; i < board.Chips.Count; i++)
+            {
+                Chips.Add(new List<Chip>());
+
+                for (int j = 0; j < board.Chips[i].Count; j++)
+                {
+                    Chips[i].Add(board.Chips[i][j] == null ? null : new Chip(board.Chips[i][j]));
+                }
+            }
+        }
     }
 }

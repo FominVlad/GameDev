@@ -54,6 +54,22 @@ namespace Reversi.Services
         }
 
         /// <summary>
+        /// Method for initializing players.
+        /// </summary>
+        /// <param name="players">Players parameters for initializing.</param>
+        /// <returns>Initialized players.</returns>
+        public List<PlayerGetDTO> InitPlayers(List<IPlayer> players, int? nextStepPlayerId)
+        {
+            if (players.Count != 2)
+                throw new Exception("Players count must be 2.");
+
+            Players = players;
+            this.NextStepPlayerId = nextStepPlayerId;
+
+            return Players.Select(player => new PlayerGetDTO(player)).ToList();
+        }
+
+        /// <summary>
         /// Method for the player do step.
         /// </summary>
         /// <param name="playerId">Player that do step.</param>
@@ -77,9 +93,9 @@ namespace Reversi.Services
             if (availableChips.Count == 0)
                 return null;
 
-            Chip chipForStep = player.PlayerType == PlayerType.Human ? 
-                new Chip(chipDoStepDTO, player.Id) : 
-                availableChips[new Random().Next(0, availableChips.Count)];
+            Chip chipForStep = player.PlayerType == PlayerType.Human ?
+                new Chip(chipDoStepDTO, player.Id) :
+                BotService.GetNextMove(BoardService.Board, availableChips, Players);
 
             if (player.PlayerType == PlayerType.Human &&
                 !availableChips.Contains(chipForStep))
@@ -91,7 +107,7 @@ namespace Reversi.Services
             return chipForStep;
         }
 
-        private void SetNextStepPlayerId(int currStepPlayerId)
+        public void SetNextStepPlayerId(int currStepPlayerId)
         {
             int? tmpNextStepPlayerId = Players.Where(player => player.Id != currStepPlayerId)
                 .Select(player => player.Id).FirstOrDefault();

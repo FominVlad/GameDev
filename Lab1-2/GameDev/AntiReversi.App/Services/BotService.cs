@@ -1,9 +1,7 @@
 ﻿using AntiReversi.App.Tree;
 using Reversi.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Reversi.Services
 {
@@ -16,19 +14,12 @@ namespace Reversi.Services
             {   6,   3,   4, 0 }
         };
 
-        public static Chip GetNextMove(Board board, List<Chip> availableChips, PlayerService playerService)
+        public static Chip GetNextMove(Board board, List<Chip> availableChips, List<IPlayer> players)
         {
-            ChipTree tree = new ChipTree(board, availableChips, playerService, 4);
+            ChipTree tree = new ChipTree(board, availableChips, players, 2);
+            tree.FillTree(tree.RootChip);
 
             return tree.RootChip.MostProfitableChip;
-
-            /*var scores = availableChips.Select(chip => 
-                new { chip, score = Evaluate(board, chip) })
-                .OrderBy(e => 100 - e.score).ToList();
-            var maxScores = scores.Where(e => e.score == scores[0].score).ToList();
-            
-            Random random = new Random();
-            return maxScores[random.Next(maxScores.Count)].chip;*/
         }
 
         public static int Evaluate(Board board, Chip chip)

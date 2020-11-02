@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v3.1",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v3.1": {
+      "AntiReversi.Client/1.0.0": {
+        "dependencies": {
+          "AntiReversi.App": "1.0.0"
+        },
+        "runtime": {
+          "AntiReversi.Client.dll": {}
+        }
+      },
+      "AntiReversi.App/1.0.0": {
+        "runtime": {
+          "AntiReversi.App.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "AntiReversi.Client/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "AntiReversi.App/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

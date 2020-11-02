@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.30517.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Reversi", "Reversi\Reversi.csproj", "{3571290A-AEA8-470F-A3E0-579FED851E03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiReversi.App", "AntiReversi.App\AntiReversi.App.csproj", "{E6DFCAFF-7162-4FDF-BF5D-9B6702314B0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntiReversi.App", "AntiReversi.App\AntiReversi.App.csproj", "{E6DFCAFF-7162-4FDF-BF5D-9B6702314B0D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntiReversi.Client", "AntiReversi.Client\AntiReversi.Client.csproj", "{CB452752-E13A-4A41-979D-02D21BA9DA36}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AntiReversi.Client", "AntiReversi.Client\AntiReversi.Client.csproj", "{CB452752-E13A-4A41-979D-02D21BA9DA36}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
